@@ -1,84 +1,60 @@
-module.exports = function (app, MySQLConnetion) {
-	var hotels = new MySQLConnetion({tableName: "hotels"});
-	var hotel_images = new MySQLConnetion({tableName: "images"});
-	var hotel_facilities = new MySQLConnetion({tableName: "hotel_facilities"});
-	app.get('/hotels', (req, res) => {
-		let page = 0;
-		let limit = 100;
-		if(!req.query.page) {
-			page = 0;
+'user strict';
+const MySQLConnetion = require('../config/database.config.js');
+
+var Hotel = function(hotel){
+	this.hotel = hotel.hotel;
+}
+
+var hotels = new MySQLConnetion({tableName: "hotels"});
+var hotel_images = new MySQLConnetion({tableName: "images"});
+var hotel_facilities = new MySQLConnetion({tableName: "hotel_facilities"});
+
+Hotel.getAllHotels = function (offset, limit, result) {
+	hotels.find('all', {limit: [offset, limit]}, function(err, rows) {
+		if(err) {
+          	console.log("error: ", err);
+            result(err, null);
 		}
 		else {
-			page = req.query.page;
-		}
-
-		if(!req.query.limit) {
-			limit = 100;
-		}
-		else {
-			limit = req.query.limit;
-		}
-		let offset = page*limit;
-
-		hotels.find('all', {limit: [offset, limit]}, function(err, rows) {
-			if (!err)
-				if (!rows)
-					res.status(404).json({"message": "No Data Found"});
-				else 
-					res.json(rows);
-			else
-				res.status(400).json({"message": "Error Occured"});
-		});
-	});
-
-	app.get('/hotel/:hotelId', (req, res) => {
-		if(!req.params.hotelId) {
-			res.status(400).json({"message": "Error Occured"});
-		}
-		else {
-			hotels.read(req.params.hotelId, function(err, rows) {
-				if (!err)
-					if (!rows)
-						res.status(404).json({"message": "No Data Found"});
-					else 
-						res.json(rows);
-				else
-					res.status(400).json({"message": "Error Occured"});
-			});
-		}
-	});
-
-	app.get('/hotel/:hotelId/hotel_images', (req, res) => {
-		if(!req.params.hotelId) {
-			res.status(400).json({"message": "Error Occured"});
-		}
-		else {
-			hotel_images.find('all', {where: "hotelId = "+req.params.hotelId}, function(err, rows) {
-				if (!err)
-					if (!rows)
-						res.status(404).json({"message": "No Data Found"});
-					else 
-						res.json(rows);
-				else
-					res.status(400).json({"message": "Error Occured"});
-			});
-		}
-	});
-
-	app.get('/hotel/:hotelId/hotel_facilities', (req, res) => {
-		if(!req.params.hotelId) {
-			res.status(400).json({"message": "Error Occured"});
-		}
-		else {
-			hotel_facilities.find('all', {where: "hotelId = "+req.params.hotelId}, function(err, rows) {
-				if (!err)
-					if (!rows)
-						res.status(404).json({"message": "No Data Found"});
-					else 
-						res.json(rows);
-				else
-					res.status(400).json({"message": "Error Occured"});
-			});
+			result(null, rows);
 		}
 	});
 }
+
+Hotel.getHotel = function (hotelId, result) {
+	hotels.find('first', {where: "id = "+hotelId}, function(err, rows) {
+		if(err) {
+          	console.log("error: ", err);
+            result(err, null);
+		}
+		else {
+			result(null, rows);
+		}
+	});
+}
+
+Hotel.getHotelImages = function (hotelId, result) {
+	hotel_images.find('all', {where: "hotelId = "+hotelId}, function(err, rows) {
+		if(err) {
+          	console.log("error: ", err);
+            result(err, null);
+		}
+		else {
+			result(null, rows);
+		}
+	});
+}
+
+Hotel.getHotelFacilities = function (hotelId, result) {
+	hotel_facilities.find('all', {where: "hotelId = "+hotelId}, function(err, rows) {
+		if(err) {
+	      	console.log("error: ", err);
+	        result(err, null);
+		}
+		else {
+			result(null, rows);
+		}
+	});
+}
+
+module.exports = Hotel;
