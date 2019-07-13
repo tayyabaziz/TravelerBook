@@ -21,7 +21,7 @@ exports.list_all_hotels = function(req, res) {
 	let offset = page*limit;
   	Hotel.getAllHotels(offset, limit, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);
@@ -33,7 +33,7 @@ exports.list_all_hotels = function(req, res) {
 exports.read_hotel = function(req, res) {
   	Hotel.getHotel(req.params.hotelId, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);
@@ -44,11 +44,12 @@ exports.read_hotel = function(req, res) {
 
 exports.read_hotel_images = function(req, res) {
   	Hotel.getHotelImages(req.params.hotelId, function(err, rows) {
-	    if (!err)
-			if (!rows)
+	    if (!err) {
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);
+	    }
 		else
 			res.status(400).json({"message": "Error Occured"});
   	});
@@ -57,7 +58,7 @@ exports.read_hotel_images = function(req, res) {
 exports.read_hotel_facilities = function(req, res) {
   	Hotel.getHotelFacilities(req.params.hotelId, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);

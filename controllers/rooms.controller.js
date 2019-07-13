@@ -21,7 +21,7 @@ exports.list_all_rooms = function(req, res) {
 	let offset = page*limit;
   	Room.getAllRooms(offset, limit, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);
@@ -33,7 +33,7 @@ exports.list_all_rooms = function(req, res) {
 exports.read_room = function(req, res) {
   	Room.getRoom(req.params.roomId, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);
@@ -45,7 +45,7 @@ exports.read_room = function(req, res) {
 exports.read_room_images = function(req, res) {
   	Room.getRoomImages(req.params.roomId, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);
@@ -57,7 +57,7 @@ exports.read_room_images = function(req, res) {
 exports.read_room_facilities = function(req, res) {
   	Room.getRoomFacilities(req.params.roomId, function(err, rows) {
 	    if (!err)
-			if (!rows)
+			if (rows === undefined || rows.length == 0)
 				res.status(404).json({"message": "No Data Found"});
 			else 
 				res.json(rows);

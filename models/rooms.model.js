@@ -1,5 +1,23 @@
 'user strict';
 const MySQLConnetion = require('../config/database.config.js');
+var log4js = require('log4js');
+
+var date = new Date();
+
+var year = date.getFullYear();
+var month = date.getMonth() + 1;
+month = (month < 10 ? "0" : "") + month;
+var day  = date.getDate();
+day = (day < 10 ? "0" : "") + day;
+var LogDateTime = year+"-"+month+"-"+month;
+
+log4js.configure({
+  appenders: { log: { type: 'file', filename: 'logs/log-'+LogDateTime+'.log' } },
+  categories: { default: { appenders: ['log'], level: 'debug' } }
+});
+
+var logger = log4js.getLogger('log');
+logger.debug("Some debug messages");
 
 var Room = function(room){
 	this.room = room.room;
@@ -22,7 +40,7 @@ Room.getAllRooms = function (offset, limit, result) {
 }
 
 Room.getRoom = function (roomId, result) {
-	rooms.find('first', {where: "id = "+roomId}, function(err, rows) {
+	rooms.read(roomId, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
             result(err, null);
