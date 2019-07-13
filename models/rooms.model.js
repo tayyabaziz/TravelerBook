@@ -1,23 +1,6 @@
 'user strict';
 const MySQLConnetion = require('../config/database.config.js');
-var log4js = require('log4js');
-
-var date = new Date();
-
-var year = date.getFullYear();
-var month = date.getMonth() + 1;
-month = (month < 10 ? "0" : "") + month;
-var day  = date.getDate();
-day = (day < 10 ? "0" : "") + day;
-var LogDateTime = year+"-"+month+"-"+month;
-
-log4js.configure({
-  appenders: { log: { type: 'file', filename: 'logs/log-'+LogDateTime+'.log' } },
-  categories: { default: { appenders: ['log'], level: 'debug' } }
-});
-
-var logger = log4js.getLogger('log');
-logger.debug("Some debug messages");
+const logger = require('../config/log.config.js');
 
 var Room = function(room){
 	this.room = room.room;
@@ -28,6 +11,7 @@ var room_images = new MySQLConnetion({tableName: "room_images"});
 var room_facilities = new MySQLConnetion({tableName: "room_facilities"});
 
 Room.getAllRooms = function (offset, limit, result) {
+	logger.debug("getAllRooms()");
 	rooms.find('all', {limit: [offset, limit]}, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
@@ -35,11 +19,13 @@ Room.getAllRooms = function (offset, limit, result) {
 		}
 		else {
 			result(null, rows);
+			logger.debug("Rows Return: "+rows.length);
 		}
 	});
 }
 
 Room.getRoom = function (roomId, result) {
+	logger.debug("getHotelFacilities("+hotelId+")");
 	rooms.read(roomId, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
@@ -47,11 +33,13 @@ Room.getRoom = function (roomId, result) {
 		}
 		else {
 			result(null, rows);
+			logger.debug(rows);
 		}
 	});
 }
 
 Room.getRoomImages = function (roomId, result) {
+	logger.debug("getHotelFacilities("+hotelId+")");
 	room_images.find('all', {where: "roomId = "+roomId}, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
@@ -59,11 +47,13 @@ Room.getRoomImages = function (roomId, result) {
 		}
 		else {
 			result(null, rows);
+			logger.debug("Rows Return: "+rows.length);
 		}
 	});
 }
 
 Room.getRoomFacilities = function (roomId, result) {
+	logger.debug("getHotelFacilities("+hotelId+")");
 	room_facilities.find('all', {where: "roomId = "+roomId}, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
@@ -71,6 +61,7 @@ Room.getRoomFacilities = function (roomId, result) {
 		}
 		else {
 			result(rowsl, res);
+			logger.debug("Rows Return: "+rows.length);
 		}
 	});
 }
