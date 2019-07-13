@@ -22,7 +22,10 @@ module.exports = function (app, MySQLConnetion) {
 
 		hotels.find('all', {limit: [offset, limit]}, function(err, rows) {
 			if (!err)
-				res.json(rows);
+				if (!rows)
+					res.status(404).json({"message": "No Data Found"});
+				else 
+					res.json(rows);
 			else
 				res.status(400).json({"message": "Error Occured"});
 		});
@@ -35,7 +38,10 @@ module.exports = function (app, MySQLConnetion) {
 		else {
 			hotels.read(req.params.hotelId, function(err, rows) {
 				if (!err)
-					res.json(rows);
+					if (!rows)
+						res.status(404).json({"message": "No Data Found"});
+					else 
+						res.json(rows);
 				else
 					res.status(400).json({"message": "Error Occured"});
 			});
@@ -49,7 +55,10 @@ module.exports = function (app, MySQLConnetion) {
 		else {
 			hotel_images.find('all', {where: "hotelId = "+req.params.hotelId}, function(err, rows) {
 				if (!err)
-					res.json(rows);
+					if (!rows)
+						res.status(404).json({"message": "No Data Found"});
+					else 
+						res.json(rows);
 				else
 					res.status(400).json({"message": "Error Occured"});
 			});
@@ -63,7 +72,10 @@ module.exports = function (app, MySQLConnetion) {
 		else {
 			hotel_facilities.find('all', {where: "hotelId = "+req.params.hotelId}, function(err, rows) {
 				if (!err)
-					res.json(rows);
+					if (!rows)
+						res.status(404).json({"message": "No Data Found"});
+					else 
+						res.json(rows);
 				else
 					res.status(400).json({"message": "Error Occured"});
 			});
