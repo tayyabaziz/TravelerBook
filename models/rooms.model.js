@@ -25,7 +25,7 @@ Room.getAllRooms = function (offset, limit, result) {
 }
 
 Room.getRoom = function (roomId, result) {
-	logger.debug("getHotelFacilities("+hotelId+")");
+	logger.debug("getHotelFacilities("+roomId+")");
 	rooms.read(roomId, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
@@ -39,7 +39,7 @@ Room.getRoom = function (roomId, result) {
 }
 
 Room.getRoomImages = function (roomId, result) {
-	logger.debug("getHotelFacilities("+hotelId+")");
+	logger.debug("getHotelFacilities("+roomId+")");
 	room_images.find('all', {where: "roomId = "+roomId}, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
@@ -53,7 +53,7 @@ Room.getRoomImages = function (roomId, result) {
 }
 
 Room.getRoomFacilities = function (roomId, result) {
-	logger.debug("getHotelFacilities("+hotelId+")");
+	logger.debug("getHotelFacilities("+roomId+")");
 	room_facilities.find('all', {where: "roomId = "+roomId}, function(err, rows) {
 		if(err) {
           	console.log("error: ", err);
