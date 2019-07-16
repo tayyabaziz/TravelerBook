@@ -24,6 +24,20 @@ Hotel.getAllHotels = function (offset, limit, result) {
 	});
 }
 
+Hotel.addHotel = function (hotelData, result) {
+	logger.debug("addHotel()");
+	hotels.save(hotelData, function(err, rows) {
+		if(err) {
+          	console.log("error: ", err);
+            result(err, null);
+		}
+		else {
+			result(null, rows);
+			logger.debug(rows);
+		}
+	});
+}
+
 Hotel.getHotel = function (hotelId, result) {
 	logger.debug("getHotel("+hotelId+")");
 	hotels.read(hotelId, function(err, rows) {

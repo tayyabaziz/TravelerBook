@@ -4,7 +4,7 @@
   "description": "Hotel Booking",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
   "keywords": [
     "TravelerBook",
@@ -20,7 +20,8 @@
     "log4js": "^4.5.1",
     "memory-cache": "^0.2.0",
     "mysql": "^2.17.1",
-    "mysql-model": "github:tayyabaziz/node-mysql-model"
+    "mysql-model": "github:tayyabaziz/node-mysql-model",
+    "nodemon": "^1.19.1"
   },
   "repository": {
     "type": "git",
