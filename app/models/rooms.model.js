@@ -1,9 +1,8 @@
-'user strict';
 const MySQLConnetion = require('../config/database.config.js');
 const logger = require('../config/log.config.js');
 
-var Room = function(room){
-	this.room = room.room;
+var Room = function(){
+
 }
 
 var rooms = new MySQLConnetion({tableName: "rooms"});
