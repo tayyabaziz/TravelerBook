@@ -1,11 +1,13 @@
-var Room = require('../models/rooms.model');
-var common = require('../common/common');
+var RoomModel = require('../models/rooms.model');
+var HelperClass = require('../helper/helper.class');
+var Helper = new HelperClass();
+var Room = new RoomModel();
 
 exports.list_all_rooms = function(req, res) {
-	let page = 0;
+	let page = 1;
 	let limit = 10;
 	if(!req.query.page) {
-		page = 0;
+		page = 1;
 	}
 	else {
 		page = req.query.page;
@@ -19,24 +21,24 @@ exports.list_all_rooms = function(req, res) {
 	}
 	let offset = (page - 1) * limit;
   	Room.getAllRooms(offset, limit, function(err, rows) {
-	    common(res, err, rows);
+	    Helper.formatResult(res, err, rows);
   	});
 };
 
 exports.read_room = function(req, res) {
   	Room.getRoom(req.params.roomId, function(err, rows) {
-	    common(res, err, rows);
+	    Helper.formatResult(res, err, rows);
   	});
 };
 
 exports.read_room_images = function(req, res) {
   	Room.getRoomImages(req.params.roomId, function(err, rows) {
-	    common(res, err, rows);
+	    Helper.formatResult(res, err, rows);
   	});
 };
 
 exports.read_room_facilities = function(req, res) {
   	Room.getRoomFacilities(req.params.roomId, function(err, rows) {
-	    common(res, err, rows);
+	    Helper.formatResult(res, err, rows);
   	});
 };

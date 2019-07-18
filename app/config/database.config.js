@@ -3,7 +3,7 @@ const mysqlModel = require('mysql-model');
 
 const dbConfig = {
     host: 'localhost',
-    database: 'musafir',
+    database: 'traveler',
     user: 'root',
     password: ''
 };
