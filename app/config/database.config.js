@@ -1,19 +1,16 @@
-const mysql = require('mysql');
-const mysqlModel = require('mysql-model');
+const Sequelize = require('sequelize');
 
 const dbConfig = {
     host: 'localhost',
-    database: 'traveler',
+    database: 'musafir',
     user: 'root',
     password: ''
 };
 
-const MySQLConnetion = mysqlModel.createConnection({
-	host: dbConfig.host,
-	user: dbConfig.user,
-	password: dbConfig.password,
-	database : dbConfig.database 
-});
+const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
+    host: dbConfig.host,
+    dialect: 'mysql'
+})
 
-
-module.exports = MySQLConnetion
+module.exports.Sequelize = Sequelize
+module.exports.sequelize = sequelize

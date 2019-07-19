@@ -1,144 +1,121 @@
-const MySQLConnetion = require('../config/database.config.js');
-const logger = require('../config/log.config.js');
-
-var hotels = new MySQLConnetion({tableName: "hotels"});
-var hotel_images = new MySQLConnetion({tableName: "images"});
-var hotel_facilities = new MySQLConnetion({tableName: "hotel_facilities"});
+const SequelizeConnection = require('../config/database.config.js');
+const Sequelize = SequelizeConnection.Sequelize;
+const sequelize = SequelizeConnection.sequelize;
 
 class HotelModel {
-	constructor(hotel){
-		console.log('Initialize Hotel Model');
-		this.hotel = hotel;
-	}
+    constructor() {
+        this.Hotels = sequelize.define('hotels', {
+            id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
+            name: { type: Sequelize.STRING, allowNull: false },
+            address: { type: Sequelize.STRING },
+            lat: { type: Sequelize.DOUBLE },
+            lng: { type: Sequelize.DOUBLE },
+            url_key: { type: Sequelize.STRING },
+            createdAt: { type: Sequelize.DATE },
+            total_rating: { type: Sequelize.DECIMAL },
+            popularfor: { type: Sequelize.STRING },
+            inactive: { type: Sequelize.INTEGER },
+        }, {
+            tableName: 'hotels',
+            freezeTableName: true,
+            timestamps: false
+        });
 
-	getAllHotels(offset, limit, result) {
-		logger.debug("getAllHotels()");
-		hotels.find('all', {limit: [offset, limit]}, function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug("Rows Return: "+rows.length);
-			}
-		});
-	}
+        this.HotelImages = sequelize.define('images', {
+            id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
+            imageUrl: { type: Sequelize.STRING, allowNull: false },
+            hotelId: { type: Sequelize.BIGINT, allowNull: false },
+        }, {
+            tableName: 'images',
+            freezeTableName: true,
+            timestamps: false
+        });
 
-	addHotel(hotelData, result) {
-		logger.debug("addHotel()");
-		hotels.save(hotelData, function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug(rows);
-			}
-		});
-	}
+        this.HotelFacilities = sequelize.define('hotel_facilities', {
+            id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
+            facilityId: { type: Sequelize.BIGINT, allowNull: false },
+            hotelId: { type: Sequelize.BIGINT, allowNull: false },
+        }, {
+            tableName: 'hotel_facilities',
+            freezeTableName: true,
+            timestamps: false
+        });
 
-	updateHotel(hotelId, hotelData, result) {
-		logger.debug("updateHotel("+hotelId+")");
-		hotels.set('id', hotelId);
-		hotels.set('lat', hotelData.lat);
-		hotels.set('lng', hotelData.lng);
-		hotels.set('name', hotelData.name);
-		hotels.set('address', hotelData.address);
-		hotels.set('url_key', hotelData.url_key);
-		hotels.set('stage_type', hotelData.stage_type);
-		hotels.set('commission_percentage', hotelData.commission_percentage);
-		hotels.set('tax_percentage', hotelData.tax_percentage);
-		hotels.set('disclaimer', hotelData.disclaimer);
-		hotels.save(function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug(rows);
-			}
-		});
-	}
+        
+        this.Hotels.hasMany(this.HotelImages);
+        this.HotelImages.belongsTo(this.Hotels, {
+            foreignKey: 'hotelId'
+        });
 
-	updateHotelField(hotelId, hotelData, result) {
-		logger.debug("updateHotel("+hotelId+")");
-		hotels.set('id', hotelId);
-		hotelData.forEach(function(key, value){
-			hotels.set(key, value);
-		});
-		hotels.save(function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug(rows);
-			}
-		});
-	}
+        this.Hotels.hasMany(this.HotelFacilities);
+        this.HotelFacilities.belongsTo(this.Hotels, {
+            foreignKey: 'hotelId'
+        });
+    }
 
-	removeHotel(hotelId, result) {
-		logger.debug("removeHotel("+hotelId+")");
-		hotels.set('id', hotelId);
-		hotels.set('inactive', 1);
+    getAllHotels(offset, limit, result) {
+        this.Hotels.findAll({
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        }).then(hotels => {
+            try {
+                result(null, hotels);
+            } catch (error) {
+                result(error, null);
+            }
+        });
+    }
 
-		console.log(hotels);
-		hotels.save(function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug(rows);
-			}
-		});
-	}
+    getHotel(hotelId, result) {
+        if(!isNaN(hotelId)) {
+            this.Hotels.findOne({
+                where: {id: hotelId}
+            }).then(hotel => {
+                try {
+                    result(null, hotel);
+                } catch (error) {
+                    result(error, null);
+                }
+            });
+        }
+        else {
+            result("Error Occured", null);
+        }
+    }
 
-	getHotel(hotelId, result) {
-		logger.debug("getHotel("+hotelId+")");
-		hotels.read(hotelId, function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug(rows);
-			}
-		});
-	}
-
-	getHotelImages(hotelId, result) {
-		logger.debug("getHotelImages("+hotelId+")");
-		hotel_images.find('all', {where: "BINARY hotelId = '"+hotelId+"'"}, function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug("Rows Return: "+rows.length);
-			}
-		});
+    getHotelImages(hotelId, result) {
+        if(!isNaN(hotelId)) {
+            this.HotelImages.findAll({
+                where: {hotelId: hotelId}
+            }).then(hotel_images => {
+                try {
+                    result(null, hotel_images);
+                } catch (error) {
+                    result(error, null);
+                }
+            });
+        }
+        else {
+            result("Error Occured", null);
+        }
+            
 	}
 
 	getHotelFacilities(hotelId, result) {
-		logger.debug("getHotelFacilities("+hotelId+")");
-		hotel_facilities.find('all', {where: "BINARY hotelId = '"+hotelId+"'"}, function(err, rows) {
-			if(err) {
-				console.log("error: ", err);
-				result(err, null);
-			}
-			else {
-				result(null, rows);
-				logger.debug("Rows Return: "+rows.length);
-			}
-		});
+        if(!isNaN(hotelId)) {
+            this.HotelFacilities.findAll({
+                where: {hotelId: hotelId}
+            }).then(hotel_facilities => {
+                try {
+                    result(null, hotel_facilities);
+                } catch (error) {
+                    result(error, null);
+                }
+            });
+        }
+        else {
+            result("Error Occured", null);
+        }
 	}
 }
 module.exports = HotelModel;
