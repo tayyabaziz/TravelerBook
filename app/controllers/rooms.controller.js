@@ -31,6 +31,26 @@ exports.read_room = function(req, res) {
   	});
 };
 
+exports.update_room = function(req, res) {
+	var roomData = req.query;
+	Room.updateRoom(req.params.roomId, roomData, function(err, rows) {
+	    Helper.formatResult(res, err, rows);
+  	});
+};
+
+exports.update_room_fields = function(req, res) {
+	var roomData = req.body;
+	Room.updateRoomField(req.params.roomId, roomData, function(err, rows) {
+	    Helper.formatResult(res, err, rows);
+  	});
+};
+
+exports.remove_room = function(req, res) {
+	Room.removeRoom(req.params.roomId, function(err, rows) {
+	    Helper.formatResult(res, err, rows);
+  	});
+};
+
 exports.read_room_images = function(req, res) {
   	Room.getRoomImages(req.params.roomId, function(err, rows) {
 	    Helper.formatResult(res, err, rows);

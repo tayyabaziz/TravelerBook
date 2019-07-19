@@ -8,6 +8,14 @@ class HelperClass {
         else
             res.status(400).json({"message": "Error Occured"});
     }
+
+    handleResult(result, data) {
+        try {
+            result(null, data);
+        } catch (error) {
+            result(error, null);
+        }
+    }
 }
 
 module.exports = HelperClass; 

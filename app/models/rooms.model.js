@@ -1,9 +1,12 @@
+var HelperClass = require('../helper/helper.class');
+
 const SequelizeConnection = require('../config/database.config.js');
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
 
 class RoomModel {
     constructor() {
+		this.Helper = new HelperClass();
         this.Rooms = sequelize.define('rooms', {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
             roomType: { type: Sequelize.STRING, allowNull: false },
@@ -47,61 +50,118 @@ class RoomModel {
 
         this.Rooms.hasMany(this.RoomImages);
         this.RoomImages.belongsTo(this.Rooms, {
+			as: 'RoomImages',
             foreignKey: 'roomId'
         });
 
         this.Rooms.hasMany(this.RoomFacilities);
         this.RoomFacilities.belongsTo(this.Rooms, {
+			as: 'RoomFacilities',
             foreignKey: 'roomId'
-        });
+		});
     }
 
     getAllRooms(offset, limit, result) {
         this.Rooms.findAll({
             offset: parseInt(offset),
-            limit: parseInt(limit)
+			limit: parseInt(limit),
+			include : [this.RoomImages, this.RoomFacilities]
         }).then(rooms => {
-            try {
-                result(null, rooms);
-            } catch (error) {
-                result(error, null);
-            }
+            this.Helper.handleResult(result, rooms);
         });
     }
 
     getRoom(roomId, result) {
         if(!isNaN(roomId)) {
             this.Rooms.findOne({
-                where: {id: roomId}
+                where: {id: roomId},
+				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
-                try {
-                    result(null, room);
-                } catch (error) {
-                    result(error, null);
-                }
+                this.Helper.handleResult(result, room);
             });
         }
         else {
             result("Error Occured", null);
         }
-    }
+	}
+	
+	updateRoom(roomId, roomData, result) {
+		if(!isNaN(roomId)) {
+			this.Rooms.update(
+				{
+					roomType: roomData.roomType,
+					desc: roomData.desc,
+					bed: roomData.bed,
+					isBreakfastIncluded: roomData.isBreakfastIncluded,
+					hotelId: roomData.hotelId,
+					price: roomData.price,
+					discountPrice: roomData.discountPrice,
+					noOfRooms: roomData.noOfRooms,
+					noOfAdults: roomData.noOfAdults,
+					noOfChilds: roomData.noOfChilds,
+					inactive: roomData.inactive,
+					maxCancelationTime: roomData.maxCancelationTime,
+				}, {
+					returning: true,
+					plain: true,
+					where: {id: roomId}
+				}
+			).then(([rowsUpdated, room]) => {
+                this.Helper.handleResult(result, room);
+            });
+		}
+		else {
+			result("Error Occured", null);
+		}
+	}
+
+	updateRoomField(roomId, roomData, result) {
+		if(!isNaN(roomId)) {
+			this.Rooms.update(
+				roomData, {
+					returning: true,
+					plain: true,
+					where: {id: roomId}
+				}
+			).then(([rowsUpdated, room]) => {
+                this.Helper.handleResult(result, room);
+            });
+		}
+		else {
+			result("Error Occured", null);
+		}
+	}
+
+	removeRoom(roomId, result) {
+		if(!isNaN(roomId)) {
+			this.Rooms.update(
+				{
+					inactive: 1,
+				}, {
+					returning: true,
+					plain: true,
+					where: {id: roomId}
+				}
+			).then(([rowsUpdated, room]) => {
+                this.Helper.handleResult(result, room);
+            });
+		}
+		else {
+			result("Error Occured", null);
+		}
+	}
 
     getRoomImages(roomId, result) {
         if(!isNaN(roomId)) {
             this.RoomImages.findAll({
                 where: {roomId: roomId}
             }).then(room_images => {
-                try {
-                    result(null, room_images);
-                } catch (error) {
-                    result(error, null);
-                }
+                this.Helper.handleResult(result, room_images);
             });
         }
         else {
             result("Error Occured", null);
         }
-            
 	}
 
 	getRoomFacilities(roomId, result) {
@@ -109,11 +169,7 @@ class RoomModel {
             this.RoomFacilities.findAll({
                 where: {roomId: roomId}
             }).then(room_facilities => {
-                try {
-                    result(null, room_facilities);
-                } catch (error) {
-                    result(error, null);
-                }
+                this.Helper.handleResult(result, room_facilities);
             });
         }
         else {

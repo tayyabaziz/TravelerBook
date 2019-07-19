@@ -32,22 +32,14 @@ exports.read_hotel = function(req, res) {
 };
 
 exports.update_hotel = function(req, res) {
-	var data = req.query;
-	var hotelData = {};
-	data.forEach(function(key, value) {
-		hotelData.key = value;
-	});
+	var hotelData = req.query;
 	Hotel.updateHotel(req.params.hotelId, hotelData, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
   	});
 };
 
 exports.update_hotel_fields = function(req, res) {
-	var data = req.query;
-	var hotelData = {};
-	data.forEach(function(key, value) {
-		hotelData.key = value;
-	});
+	var hotelData = req.body;
 	Hotel.updateHotelField(req.params.hotelId, hotelData, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
   	});
