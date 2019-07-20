@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const dbConfig = {
     host: 'localhost',
-    database: 'musafir',
+    database: 'traveler',
     user: 'root',
     password: ''
 };
@@ -10,7 +10,7 @@ const dbConfig = {
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
     host: dbConfig.host,
     dialect: 'mysql'
-})
+});
 
 module.exports.Sequelize = Sequelize
 module.exports.sequelize = sequelize
