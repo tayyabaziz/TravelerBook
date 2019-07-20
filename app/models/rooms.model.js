@@ -1,13 +1,14 @@
 var HelperClass = require('../helper/helper.class');
+const SequelizeConnection = require('../config/database.config');
 
-const SequelizeConnection = require('../config/database.config.js');
+const Helper = new HelperClass();
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
 
 class RoomModel {
     constructor() {
-		this.Helper = new HelperClass();
-        this.Rooms = sequelize.define('rooms', {
+        var baseTableName = 'room';
+        var baseTableFields = {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
             roomType: { type: Sequelize.STRING, allowNull: false },
             desc: { type: Sequelize.STRING },
@@ -21,11 +22,15 @@ class RoomModel {
 			noOfChilds: { type: Sequelize.INTEGER },
             maxCancelationTime: { type: Sequelize.DATE },
             inactive: { type: Sequelize.INTEGER, allowNull: false},
-        }, {
-            tableName: 'rooms',
+        };
+        var baseTableOptions = {
+            tableName: baseTableName,
             freezeTableName: true,
             timestamps: false
-        });
+        };
+
+        this.Rooms = sequelize.define(baseTableName, baseTableFields, baseTableOptions);
+        this.Rooms.sync();
 
         this.RoomImages = sequelize.define('room_images', {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
@@ -36,7 +41,13 @@ class RoomModel {
             freezeTableName: true,
             timestamps: false
         });
-
+        this.Rooms.hasMany(this.RoomImages);
+        this.RoomImages.belongsTo(this.Rooms, {
+			as: 'RoomImages',
+            foreignKey: 'roomId'
+        });
+        this.RoomImages.sync();
+        
         this.RoomFacilities = sequelize.define('room_facilities', {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
             facilityId: { type: Sequelize.BIGINT, allowNull: false },
@@ -47,18 +58,12 @@ class RoomModel {
             freezeTableName: true,
             timestamps: false
         });
-
-        this.Rooms.hasMany(this.RoomImages);
-        this.RoomImages.belongsTo(this.Rooms, {
-			as: 'RoomImages',
-            foreignKey: 'roomId'
-        });
-
         this.Rooms.hasMany(this.RoomFacilities);
         this.RoomFacilities.belongsTo(this.Rooms, {
 			as: 'RoomFacilities',
             foreignKey: 'roomId'
-		});
+        });
+        this.RoomFacilities.sync();
     }
 
     getAllRooms(offset, limit, result) {
@@ -67,7 +72,7 @@ class RoomModel {
 			limit: parseInt(limit),
 			include : [this.RoomImages, this.RoomFacilities]
         }).then(rooms => {
-            this.Helper.handleResult(result, rooms);
+            Helper.handleResult(result, rooms);
         }).catch(Sequelize.Error, function (err) {
             result(err, null);
         });
@@ -79,7 +84,7 @@ class RoomModel {
                 where: {id: roomId},
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
-                this.Helper.handleResult(result, room);
+                Helper.handleResult(result, room);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -168,7 +173,7 @@ class RoomModel {
 					where: {id: roomId}
 				}
 			).then(([rowsUpdated, room]) => {
-                this.Helper.handleResult(result, room);
+                Helper.handleResult(result, room);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -211,7 +216,7 @@ class RoomModel {
             }).then(room => {
                 room.inactive = 1;
                 room.save();
-                this.Helper.handleResult(result, room);
+                Helper.handleResult(result, room);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -226,7 +231,7 @@ class RoomModel {
             this.RoomImages.findAll({
                 where: {roomId: roomId}
             }).then(room_images => {
-                this.Helper.handleResult(result, room_images);
+                Helper.handleResult(result, room_images);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -241,7 +246,7 @@ class RoomModel {
             this.RoomFacilities.findAll({
                 where: {roomId: roomId}
             }).then(room_facilities => {
-                this.Helper.handleResult(result, room_facilities);
+                Helper.handleResult(result, room_facilities);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });

@@ -10,7 +10,8 @@
     "TravelerBook",
     "NodeJS",
     "RestAPI",
-    "MySQL"
+    "MySQL",
+    "Sequelize"
   ],
   "author": "Tayyab Aziz",
   "license": "MIT",

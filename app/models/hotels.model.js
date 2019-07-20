@@ -1,13 +1,14 @@
 var HelperClass = require('../helper/helper.class');
+const SequelizeConnection = require('../config/database.config');
 
-const SequelizeConnection = require('../config/database.config.js');
+const Helper = new HelperClass();
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
 
 class HotelModel {
     constructor() {
-		this.Helper = new HelperClass();
-        this.Hotels = sequelize.define('hotels', {
+        var baseTableName = 'hotels';
+        var baseTableFields = {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
             name: { type: Sequelize.STRING, allowNull: false },
             address: { type: Sequelize.STRING },
@@ -17,12 +18,16 @@ class HotelModel {
             total_rating: { type: Sequelize.DECIMAL, allowNull: false, defaultValue: '0' },
             popularfor: { type: Sequelize.STRING },
             inactive: { type: Sequelize.INTEGER, allowNull: false},
-        }, {
-            tableName: 'hotels',
+        };
+        var baseTableOptions = {
+            tableName: baseTableName,
             freezeTableName: true,
             timestamps: true,
             updatedAt: false,
-        });
+        };
+        
+        this.Hotels = sequelize.define(baseTableName, baseTableFields, baseTableOptions);
+        this.Hotels.sync();
 
         this.HotelImages = sequelize.define('images', {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
@@ -33,6 +38,12 @@ class HotelModel {
             freezeTableName: true,
             timestamps: false
         });
+        this.Hotels.hasMany(this.HotelImages);
+        this.HotelImages.belongsTo(this.Hotels, {
+			as: 'HotelImages',
+            foreignKey: 'hotelId'
+        });
+        this.HotelImages.sync();
 
         this.HotelFacilities = sequelize.define('hotel_facilities', {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
@@ -43,18 +54,12 @@ class HotelModel {
             freezeTableName: true,
             timestamps: false
         });
-
-        this.Hotels.hasMany(this.HotelImages);
-        this.HotelImages.belongsTo(this.Hotels, {
-			as: 'HotelImages',
-            foreignKey: 'hotelId'
-        });
-
         this.Hotels.hasMany(this.HotelFacilities);
         this.HotelFacilities.belongsTo(this.Hotels, {
 			as: 'HotelFacilities',
             foreignKey: 'hotelId'
         });
+        this.HotelFacilities.sync();
     }
 
     getAllHotels(offset, limit, result) {
@@ -63,7 +68,7 @@ class HotelModel {
 			limit: parseInt(limit),
 			include : [this.HotelImages, this.HotelFacilities]
         }).then(hotels => {
-            this.Helper.handleResult(result, hotels);
+            Helper.handleResult(result, hotels);
         }).catch(Sequelize.Error, function (err) {
             result(err, null);
         });
@@ -75,7 +80,7 @@ class HotelModel {
 				where: {id: hotelId},
 				include : [this.HotelImages, this.HotelFacilities]
             }).then(hotel => {
-                this.Helper.handleResult(result, hotel);
+                Helper.handleResult(result, hotel);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -167,7 +172,7 @@ class HotelModel {
             }).then(hotel => {
                 hotel.inactive = 1;
                 hotel.save();
-                this.Helper.handleResult(result, hotel);
+                Helper.handleResult(result, hotel);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -182,7 +187,7 @@ class HotelModel {
             this.HotelImages.findAll({
                 where: {hotelId: hotelId}
             }).then(hotel_images => {
-                this.Helper.handleResult(result, hotel_images);
+                Helper.handleResult(result, hotel_images);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });
@@ -197,7 +202,7 @@ class HotelModel {
             this.HotelFacilities.findAll({
                 where: {hotelId: hotelId}
             }).then(hotel_facilities => {
-                this.Helper.handleResult(result, hotel_facilities);
+                Helper.handleResult(result, hotel_facilities);
             }).catch(Sequelize.Error, function (err) {
                 result(err, null);
             });

@@ -1,16 +1,19 @@
 const Sequelize = require('sequelize');
+const config = require('./config.json');
 
-const dbConfig = {
-    host: 'localhost',
-    database: 'traveler',
-    user: 'root',
-    password: ''
-};
+const dbConfig = config[config.environment];
 
-const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
     host: dbConfig.host,
-    dialect: 'mysql'
+    dialect: dbConfig.dialect
 });
 
-module.exports.Sequelize = Sequelize
-module.exports.sequelize = sequelize
+sequelize.authenticate().then(() => {
+    console.log('Connection has been established successfully.');
+}).catch(err => {
+    console.error('Unable to connect to the database:', err.message);
+    process.exit();
+});
+
+module.exports.Sequelize = Sequelize;
+module.exports.sequelize = sequelize;
