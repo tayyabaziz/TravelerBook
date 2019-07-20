@@ -13,14 +13,14 @@ class RoomModel {
             desc: { type: Sequelize.STRING },
             bed: { type: Sequelize.INTEGER },
             isBreakfastIncluded: { type: Sequelize.INTEGER },
-            hotelId: { type: Sequelize.INTEGER },
+            hotelId: { type: Sequelize.INTEGER, allowNull: false},
 			price: { type: Sequelize.DECIMAL },
 			discountPrice: { type: Sequelize.DECIMAL },
             noOfRooms: { type: Sequelize.INTEGER },
 			noOfAdults: { type: Sequelize.INTEGER },
 			noOfChilds: { type: Sequelize.INTEGER },
-            inactive: { type: Sequelize.INTEGER },
             maxCancelationTime: { type: Sequelize.DATE },
+            inactive: { type: Sequelize.INTEGER, allowNull: false},
         }, {
             tableName: 'rooms',
             freezeTableName: true,
@@ -68,6 +68,8 @@ class RoomModel {
 			include : [this.RoomImages, this.RoomFacilities]
         }).then(rooms => {
             this.Helper.handleResult(result, rooms);
+        }).catch(Sequelize.Error, function (err) {
+            result(err, null);
         });
     }
 
@@ -78,10 +80,69 @@ class RoomModel {
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
                 this.Helper.handleResult(result, room);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
         }
         else {
-            result("Error Occured", null);
+            result("Incorrect Room Id", null);
+        }
+    }
+    
+    createRoom(roomData, result) {
+        var room = {};
+        room.roomType = (roomData.roomType != undefined) ? roomData.roomType: null;
+        room.desc = (roomData.desc != undefined) ? roomData.desc: null;
+        room.bed = (roomData.bed != undefined) ? roomData.bed: null;
+        room.isBreakfastIncluded = (roomData.isBreakfastIncluded != undefined) ? roomData.isBreakfastIncluded: null;
+        room.hotelId = (roomData.hotelId != undefined) ? roomData.hotelId: null;
+        room.price = (roomData.price != undefined) ? roomData.price: null;
+        room.discountPrice = (roomData.discountPrice != undefined) ? roomData.discountPrice: null;
+        room.noOfRooms = (roomData.noOfRooms != undefined) ? roomData.noOfRooms: null;
+        room.noOfAdults = (roomData.noOfAdults != undefined) ? roomData.noOfAdults: null;
+        room.noOfChilds = (roomData.noOfChilds != undefined) ? roomData.noOfChilds: null;
+        room.maxCancelationTime = (roomData.maxCancelationTime != undefined) ? roomData.maxCancelationTime: null;
+        room.inactive = 0;
+        room.room_images = (roomData.room_images != undefined) ? roomData.room_images: null;
+        room.room_facilities = (roomData.room_facilities != undefined) ? roomData.room_facilities: null;
+        
+        this.Rooms.create(room, {
+            include: [this.RoomImages, this.RoomFacilities]
+        }).then((roomResponse) => {
+            result(null, roomResponse);
+        }).catch(Sequelize.Error, function (err) {
+            result(err.message, null);
+        });
+    }
+
+    updateRoom(roomId, roomData, result) {
+		if(!isNaN(roomId)) {
+            this.Rooms.findOne({
+				where: {id: roomId},
+				include : [this.RoomImages, this.RoomFacilities]
+            }).then(room => {
+                room.roomType = (roomData.roomType != undefined) ? roomData.roomType: null;
+                room.desc = (roomData.desc != undefined) ? roomData.desc: null;
+                room.bed = (roomData.bed != undefined) ? roomData.bed: null;
+                room.isBreakfastIncluded = (roomData.isBreakfastIncluded != undefined) ? roomData.isBreakfastIncluded: null;
+                room.price = (roomData.price != undefined) ? roomData.price: null;
+                room.discountPrice = (roomData.discountPrice != undefined) ? roomData.discountPrice: null;
+                room.noOfRooms = (roomData.noOfRooms != undefined) ? roomData.noOfRooms: null;
+                room.noOfAdults = (roomData.noOfAdults != undefined) ? roomData.noOfAdults: null;
+                room.noOfChilds = (roomData.noOfChilds != undefined) ? roomData.noOfChilds: null;
+                room.maxCancelationTime = (roomData.maxCancelationTime != undefined) ? roomData.maxCancelationTime: null;
+
+                room.save().then(function() {
+                    result(null, room);
+                }).catch(Sequelize.Error, function (err) {
+                    result(err.message, null);
+                });
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
+            });
+		}
+        else {
+            result("Incorrect Room Id", null);
         }
 	}
 	
@@ -99,8 +160,8 @@ class RoomModel {
 					noOfRooms: roomData.noOfRooms,
 					noOfAdults: roomData.noOfAdults,
 					noOfChilds: roomData.noOfChilds,
-					inactive: roomData.inactive,
 					maxCancelationTime: roomData.maxCancelationTime,
+					inactive: roomData.inactive,
 				}, {
 					returning: true,
 					plain: true,
@@ -108,46 +169,55 @@ class RoomModel {
 				}
 			).then(([rowsUpdated, room]) => {
                 this.Helper.handleResult(result, room);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
 		}
 		else {
-			result("Error Occured", null);
+			result("Incorrect Room Id", null);
 		}
 	}
 
 	updateRoomField(roomId, roomData, result) {
 		if(!isNaN(roomId)) {
-			this.Rooms.update(
-				roomData, {
-					returning: true,
-					plain: true,
-					where: {id: roomId}
-				}
-			).then(([rowsUpdated, room]) => {
-                this.Helper.handleResult(result, room);
+            this.Rooms.findOne({
+				where: {id: hotelId},
+				include : [this.RoomImages, this.RoomFacilities]
+            }).then(room => {
+                for (const key in roomData) {
+                    if (roomData.hasOwnProperty(key)) {
+                        room[key] = (roomData[key] != undefined) ? roomData[key]: null;
+                    }
+                }
+                room.save().then(function() {
+                    result(null, room);
+                }).catch(Sequelize.Error, function (err) {
+                    result(err.message, null);
+                });
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
 		}
 		else {
-			result("Error Occured", null);
+			result("Incorrect Room Id", null);
 		}
 	}
 
 	removeRoom(roomId, result) {
 		if(!isNaN(roomId)) {
-			this.Rooms.update(
-				{
-					inactive: 1,
-				}, {
-					returning: true,
-					plain: true,
-					where: {id: roomId}
-				}
-			).then(([rowsUpdated, room]) => {
+            this.Rooms.findOne({
+                where: {id: roomId},
+				include : [this.roomImages, this.roomFacilities]               
+            }).then(room => {
+                room.inactive = 1;
+                room.save();
                 this.Helper.handleResult(result, room);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
 		}
 		else {
-			result("Error Occured", null);
+			result("Incorrect Room Id", null);
 		}
 	}
 
@@ -157,10 +227,12 @@ class RoomModel {
                 where: {roomId: roomId}
             }).then(room_images => {
                 this.Helper.handleResult(result, room_images);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
         }
         else {
-            result("Error Occured", null);
+            result("Incorrect Room Id", null);
         }
 	}
 
@@ -170,11 +242,45 @@ class RoomModel {
                 where: {roomId: roomId}
             }).then(room_facilities => {
                 this.Helper.handleResult(result, room_facilities);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
         }
         else {
-            result("Error Occured", null);
+            result("Incorrect Room Id", null);
         }
-	}
+    }
+    
+    createRoomImages(roomId, roomExtendedData, result) {
+        if(!isNaN(roomId)) {
+            for (let index = 0; index < roomExtendedData.length; index++) {
+                roomExtendedData[index].roomId = roomId;
+            }
+            this.RoomImages.bulkCreate(roomExtendedData).then((room_image) => {
+                result(null, room_image);
+            }).catch(Sequelize.Error, function (err) {
+                result(err.message, null);
+            });
+        }
+        else {
+            result("Incorrect room Id", null);
+        }
+    }
+    
+    createRoomFacilities(roomId, roomExtendedData, result) {
+        if(!isNaN(roomId)) {
+            for (let index = 0; index < roomExtendedData.length; index++) {
+                roomExtendedData[index].roomId = roomId;
+            }
+            this.RoomFacilities.bulkCreate(roomExtendedData).then((room_facility) => {
+                result(null, room_facility);
+            }).catch(Sequelize.Error, function (err) {
+                result(err.message, null);
+            });
+        }
+        else {
+            result("Incorrect Hotel Id", null);
+        }
+    }
 }
 module.exports = RoomModel;

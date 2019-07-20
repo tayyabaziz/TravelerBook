@@ -13,15 +13,15 @@ class HotelModel {
             address: { type: Sequelize.STRING },
             lat: { type: Sequelize.DOUBLE },
             lng: { type: Sequelize.DOUBLE },
-            url_key: { type: Sequelize.STRING },
-            createdAt: { type: Sequelize.DATE },
-            total_rating: { type: Sequelize.DECIMAL },
+            url_key: { type: Sequelize.STRING, allowNull: false },
+            total_rating: { type: Sequelize.DECIMAL, allowNull: false, defaultValue: '0' },
             popularfor: { type: Sequelize.STRING },
-            inactive: { type: Sequelize.INTEGER },
+            inactive: { type: Sequelize.INTEGER, allowNull: false},
         }, {
             tableName: 'hotels',
             freezeTableName: true,
-            timestamps: false
+            timestamps: true,
+            updatedAt: false,
         });
 
         this.HotelImages = sequelize.define('images', {
@@ -64,6 +64,8 @@ class HotelModel {
 			include : [this.HotelImages, this.HotelFacilities]
         }).then(hotels => {
             this.Helper.handleResult(result, hotels);
+        }).catch(Sequelize.Error, function (err) {
+            result(err, null);
         });
     }
 
@@ -74,73 +76,105 @@ class HotelModel {
 				include : [this.HotelImages, this.HotelFacilities]
             }).then(hotel => {
                 this.Helper.handleResult(result, hotel);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
         }
         else {
-            result("Error Occured", null);
+            result("Incorrect Hotel Id", null);
         }
 	}
-	
-	updateHotel(hotelId, hotelData, result) {
+    
+    createHotel(hotelData, result) {
+        var hotel = {};
+        hotel.name = (hotelData.name != undefined) ? hotelData.name: null;
+        hotel.address = (hotelData.address != undefined) ? hotelData.address: null;
+        hotel.lat = (hotelData.lat != undefined) ? hotelData.lat: null;
+        hotel.lng = (hotelData.lng != undefined) ? hotelData.lng: null;
+        hotel.url_key = (hotelData.url_key != undefined) ? hotelData.url_key: null;
+        hotel.total_rating = 0;
+        hotel.popularfor = (hotelData.popularfor != undefined) ? hotelData.popularfor: null;
+        hotel.inactive = 0;
+        hotel.createdAt = (hotelData.createdAt != undefined) ? hotelData.createdAt: null;
+        hotel.images = (hotelData.images != undefined) ? hotelData.images: null;
+        hotel.hotel_facilities = (hotelData.hotel_facilities != undefined) ? hotelData.hotel_facilities: null;
+        
+        this.Hotels.create(hotel, {
+            include: [this.HotelImages, this.HotelFacilities]
+        }).then((hotelResponse) => {
+            result(null, hotelResponse);
+        }).catch(Sequelize.Error, function (err) {
+            result(err.message, null);
+        });
+    }
+
+    updateHotel(hotelId, hotelData, result) {
 		if(!isNaN(hotelId)) {
-			this.Hotels.update(
-				{
-					name: hotelData.name,
-					address: hotelData.address,
-					lat: hotelData.lat,
-					lng: hotelData.lng,
-					url_key: hotelData.url_key,
-					createdAt: hotelData.createdAt,
-					total_rating: hotelData.total_rating,
-					popularfor: hotelData.popularfor,
-				}, {
-					returning: true,
-					plain: true,
-					where: {id: hotelId}
-				}
-			).then(hotel => {
-                this.Helper.handleResult(result, hotel);
+            this.Hotels.findOne({
+				where: {id: hotelId},
+				include : [this.HotelImages, this.HotelFacilities]
+            }).then(hotel => {
+                hotel.name = (hotelData.name != undefined) ? hotelData.name: null;
+                hotel.address = (hotelData.address != undefined) ? hotelData.address: null;
+                hotel.lat = (hotelData.lat != undefined) ? hotelData.lat: null;
+                hotel.lng = (hotelData.lng != undefined) ? hotelData.lng: null;
+                hotel.url_key = (hotelData.url_key != undefined) ? hotelData.url_key: null;
+                hotel.popularfor = (hotelData.popularfor != undefined) ? hotelData.popularfor: null;
+                hotel.save().then(function() {
+                    result(null, hotel);
+                }).catch(Sequelize.Error, function (err) {
+                    result(err.message, null);
+                });
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
 		}
-		else {
-			result("Error Occured", null);
-		}
+        else {
+            result("Incorrect Hotel Id", null);
+        }
 	}
 
 	updateHotelField(hotelId, hotelData, result) {
 		if(!isNaN(hotelId)) {
-			this.Hotels.update(
-				hotelData, {
-					returning: true,
-					plain: true,
-					where: {id: hotelId}
-				}
-			).then(hotel => {
-                this.Helper.handleResult(result, hotel);
+			this.Hotels.findOne({
+				where: {id: hotelId},
+				include : [this.HotelImages, this.HotelFacilities]
+            }).then(hotel => {
+                for (const key in hotelData) {
+                    if (hotelData.hasOwnProperty(key)) {
+                        hotel[key] = (hotelData[key] != undefined) ? hotelData[key]: null;
+                    }
+                }
+                hotel.save().then(function() {
+                    result(null, hotel);
+                }).catch(Sequelize.Error, function (err) {
+                    result(err.message, null);
+                });
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
 		}
-		else {
-			result("Error Occured", null);
-		}
+        else {
+            result("Incorrect Hotel Id", null);
+        }
 	}
 
 	removeHotel(hotelId, result) {
-		if(!isNaN(hotelId)) {
-			this.Hotels.update(
-				{	
-					inactive: 1,
-				}, {
-					returning: true,
-					plain: true,
-					where: {id: hotelId}
-				}
-			).then(hotel => {
+        if(!isNaN(hotelId)) {
+            this.Hotels.findOne({
+                where: {id: hotelId},
+				include : [this.HotelImages, this.HotelFacilities]               
+            }).then(hotel => {
+                hotel.inactive = 1;
+                hotel.save();
                 this.Helper.handleResult(result, hotel);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
 		}
-		else {
-			result("Error Occured", null);
-		}
+        else {
+            result("Incorrect Hotel Id", null);
+        }
 	}
 
     getHotelImages(hotelId, result) {
@@ -149,24 +183,60 @@ class HotelModel {
                 where: {hotelId: hotelId}
             }).then(hotel_images => {
                 this.Helper.handleResult(result, hotel_images);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
         }
         else {
-            result("Error Occured", null);
+            result("Incorrect Hotel Id", null);
         }
-	}
-
+    }
+    
 	getHotelFacilities(hotelId, result) {
         if(!isNaN(hotelId)) {
             this.HotelFacilities.findAll({
                 where: {hotelId: hotelId}
             }).then(hotel_facilities => {
                 this.Helper.handleResult(result, hotel_facilities);
+            }).catch(Sequelize.Error, function (err) {
+                result(err, null);
             });
         }
         else {
-            result("Error Occured", null);
+            result("Incorrect Hotel Id", null);
         }
-	}
+    }
+
+    createHotelImages(hotelId, hotelExtendedData, result) {
+        if(!isNaN(hotelId)) {
+            for (let index = 0; index < hotelExtendedData.length; index++) {
+                hotelExtendedData[index].hotelId = hotelId;
+            }
+            this.HotelImages.bulkCreate(hotelExtendedData).then((hotel_image) => {
+                result(null, hotel_image);
+            }).catch(Sequelize.Error, function (err) {
+                result(err.message, null);
+            });
+        }
+        else {
+            result("Incorrect Hotel Id", null);
+        }
+    }
+    
+    createHotelFacilities(hotelId, hotelExtendedData, result) {
+        if(!isNaN(hotelId)) {
+            for (let index = 0; index < hotelExtendedData.length; index++) {
+                hotelExtendedData[index].hotelId = hotelId;
+            }
+            this.HotelFacilities.bulkCreate(hotelExtendedData).then((hotel_facility) => {
+                result(null, hotel_facility);
+            }).catch(Sequelize.Error, function (err) {
+                result(err.message, null);
+            });
+        }
+        else {
+            result("Incorrect Hotel Id", null);
+        }
+    }
 }
 module.exports = HotelModel;

@@ -25,6 +25,13 @@ exports.list_all_hotels = function(req, res) {
   	});
 };
 
+exports.add_hotel = function(req, res) {
+	var hotelData = req.body;
+	Hotel.createHotel(hotelData, function(err, rows) {
+	  Helper.formatResult(res, err, rows);
+	});
+};
+
 exports.read_hotel = function(req, res) {
   	Hotel.getHotel(req.params.hotelId, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
@@ -32,7 +39,7 @@ exports.read_hotel = function(req, res) {
 };
 
 exports.update_hotel = function(req, res) {
-	var hotelData = req.query;
+	var hotelData = req.body;
 	Hotel.updateHotel(req.params.hotelId, hotelData, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
   	});
@@ -61,4 +68,18 @@ exports.read_hotel_facilities = function(req, res) {
   	Hotel.getHotelFacilities(req.params.hotelId, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
   	});
+};
+
+exports.add_hotel_images = function(req, res) {
+	var hotelData = req.body;
+	Hotel.createHotelImages(req.params.hotelId, hotelData, function(err, rows) {
+	  Helper.formatResult(res, err, rows);
+	});
+};
+
+exports.add_hotel_facilities = function(req, res) {
+	var hotelData = req.body;
+	Hotel.createHotelFacilities(req.params.hotelId, hotelData, function(err, rows) {
+	  Helper.formatResult(res, err, rows);
+	});
 };

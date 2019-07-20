@@ -25,6 +25,13 @@ exports.list_all_rooms = function(req, res) {
   	});
 };
 
+exports.add_room = function(req, res) {
+	var roomData = req.body;
+	Room.createRoom(roomData, function(err, rows) {
+	  Helper.formatResult(res, err, rows);
+	});
+};
+
 exports.read_room = function(req, res) {
   	Room.getRoom(req.params.roomId, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
@@ -61,4 +68,18 @@ exports.read_room_facilities = function(req, res) {
   	Room.getRoomFacilities(req.params.roomId, function(err, rows) {
 	    Helper.formatResult(res, err, rows);
   	});
+};
+
+exports.add_room_images = function(req, res) {
+	var roomData = req.body;
+	Room.createRoomImages(req.params.roomId, roomData, function(err, rows) {
+	  Helper.formatResult(res, err, rows);
+	});
+};
+
+exports.add_room_facilities = function(req, res) {
+	var roomData = req.body;
+	Room.createRoomFacilities(req.params.roomId, roomData, function(err, rows) {
+	  Helper.formatResult(res, err, rows);
+	});
 };

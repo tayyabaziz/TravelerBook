@@ -6,13 +6,14 @@ class HelperClass {
             else 
                 res.json(rows);
         else
-            res.status(400).json({"message": "Error Occured"});
+            res.status(400).json({"message": err});
     }
 
     handleResult(result, data) {
         try {
             result(null, data);
         } catch (error) {
+            console.log(error);
             result(error, null);
         }
     }
