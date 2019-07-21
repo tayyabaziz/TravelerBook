@@ -6,7 +6,8 @@ const dbConfig = config[config.environment];
 const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
     host: dbConfig.host,
     port: dbConfig.port,
-    dialect: dbConfig.dialect
+    dialect: dbConfig.dialect,
+    logging: false //Console query logging
 });
 
 sequelize.authenticate().then(() => {
