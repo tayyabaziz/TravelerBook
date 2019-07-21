@@ -23,5 +23,13 @@
         "host": "localhost",
         "port": "3306",
         "dialect": "mysql"
+    },
+    "testpostgres": {
+        "username": "postgres",
+        "password": "root",
+        "database": "traveler",
+        "host": "localhost",
+        "port": "5432",
+        "dialect": "postgres"
     }
 }

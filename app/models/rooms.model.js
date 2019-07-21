@@ -7,7 +7,7 @@ const sequelize = SequelizeConnection.sequelize;
 
 class RoomModel {
     constructor() {
-        var baseTableName = 'room';
+        var baseTableName = 'rooms';
         var baseTableFields = {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
             roomType: { type: Sequelize.STRING, allowNull: false },
