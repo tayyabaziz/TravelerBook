@@ -31,5 +31,22 @@
         "host": "localhost",
         "port": "5432",
         "dialect": "postgres"
-    }
+    },
+    "appConfig": [
+        {
+            "versionNo": "default",
+            "apiPath": "app",
+            "available": true
+        },
+        {
+            "versionNo": "v1",
+            "apiPath": "app1",
+            "available": false
+        },
+        {
+            "versionNo": "v2",
+            "apiPath": "app2",
+            "available": false
+        }
+    ]
 }

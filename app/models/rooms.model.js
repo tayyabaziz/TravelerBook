@@ -108,8 +108,8 @@ class RoomModel {
         room.noOfChilds = (roomData.noOfChilds != undefined) ? roomData.noOfChilds: null;
         room.maxCancelationTime = (roomData.maxCancelationTime != undefined) ? roomData.maxCancelationTime: null;
         room.inactive = 0;
-        room.room_images = (roomData.room_images != undefined) ? roomData.room_images: null;
-        room.room_facilities = (roomData.room_facilities != undefined) ? roomData.room_facilities: null;
+        room.room_images = (roomData.room_images != undefined) ? roomData.room_images: [];
+        room.room_facilities = (roomData.room_facilities != undefined) ? roomData.room_facilities: [];
         
         this.Rooms.create(room, {
             include: [this.RoomImages, this.RoomFacilities]

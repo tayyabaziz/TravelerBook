@@ -1,8 +1,7 @@
+const config = require('./config.json');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');  
-
-var routes = require('./app/routes/all.routes'); //importing route
 
 // create express app
 const app = express();
@@ -12,7 +11,18 @@ app.use(bodyParser.json())
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use('/api', routes);
+config.appConfig.forEach(elements => {
+	if(elements.available == true) {
+		var routes = require('./'+elements.apiPath+'/routes/all.routes'); //importing route
+		if(elements.versionNo == "default") {
+			app.use('/api', routes);
+		}
+		else {
+			app.use('/api/'+elements.versionNo, routes);
+		}
+	}
+});
+
 app.use(cors());
 
 app.get('/', (req, res) => {

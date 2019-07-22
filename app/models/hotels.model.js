@@ -101,8 +101,8 @@ class HotelModel {
         hotel.popularfor = (hotelData.popularfor != undefined) ? hotelData.popularfor: null;
         hotel.inactive = 0;
         hotel.createdAt = (hotelData.createdAt != undefined) ? hotelData.createdAt: null;
-        hotel.images = (hotelData.images != undefined) ? hotelData.images: null;
-        hotel.hotel_facilities = (hotelData.hotel_facilities != undefined) ? hotelData.hotel_facilities: null;
+        hotel.images = (hotelData.images != undefined) ? hotelData.images: [];
+        hotel.hotel_facilities = (hotelData.hotel_facilities != undefined) ? hotelData.hotel_facilities: [];
         
         this.Hotels.create(hotel, {
             include: [this.HotelImages, this.HotelFacilities]
