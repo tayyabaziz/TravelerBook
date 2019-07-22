@@ -1,54 +1,60 @@
 {
     "environment": "development",
-    "development": {
-        "username": "root",
-        "password": "",
-        "database": "traveler",
-        "host": "localhost",
-        "port": "3306",
-        "dialect": "mysql"
+    "appConfig": {
+        "apiLoggingEnable": true,
+        "apiContainers": [
+            {
+                "versionNo": "default",
+                "apiPath": "app",
+                "apiUrlPath": "/api",
+                "routesPath": "./app/routes/all.routes",
+                "available": true
+            },
+            {
+                "versionNo": "v1",
+                "apiPath": "app1",
+                "available": false
+            },
+            {
+                "versionNo": "v2",
+                "apiPath": "app2",
+                "available": false
+            }
+        ]
     },
-    "test": {
-        "username": "root",
-        "password": null,
-        "database": "traveler",
-        "host": "localhost",
-        "port": "3306",
-        "dialect": "mysql"
-    },
-    "production": {
-        "username": "root",
-        "password": null,
-        "database": "traveler",
-        "host": "localhost",
-        "port": "3306",
-        "dialect": "mysql"
-    },
-    "testpostgres": {
-        "username": "postgres",
-        "password": "root",
-        "database": "traveler",
-        "host": "localhost",
-        "port": "5432",
-        "dialect": "postgres"
-    },
-    "appConfig": [
-        {
-            "versionNo": "default",
-            "apiPath": "app",
-            "apiUrlPath": "/api",
-            "routesPath": "./app/routes/all.routes",
-            "available": true
+    "dbConfig": {
+        "dbLoggingEnable": false,
+        "development": {
+            "username": "root",
+            "password": "",
+            "database": "traveler",
+            "host": "localhost",
+            "port": "3306",
+            "dialect": "mysql"
         },
-        {
-            "versionNo": "v1",
-            "apiPath": "app1",
-            "available": false
+        "test": {
+            "username": "root",
+            "password": null,
+            "database": "traveler",
+            "host": "localhost",
+            "port": "3306",
+            "dialect": "mysql"
         },
-        {
-            "versionNo": "v2",
-            "apiPath": "app2",
-            "available": false
+        "production": {
+            "username": "root",
+            "password": null,
+            "database": "traveler",
+            "host": "localhost",
+            "port": "3306",
+            "dialect": "mysql"
+        },
+        "testpostgres": {
+            "username": "postgres",
+            "password": "root",
+            "database": "traveler",
+            "host": "localhost",
+            "port": "5432",
+            "dialect": "postgres"
         }
-    ]
+    }
 }

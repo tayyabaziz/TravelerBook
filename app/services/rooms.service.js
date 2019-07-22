@@ -62,7 +62,7 @@ class RoomService {
     }
     createRoomImages(data, res) {
     	try {
-            RoomModel.createRoomImages(data.roomId, res);
+            RoomModel.createRoomImages(data.roomId, data.body, res);
         } catch (error) {
             throw Error(error);
         }

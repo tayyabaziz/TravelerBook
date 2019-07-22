@@ -254,14 +254,24 @@ class RoomModel {
     
     createRoomImages(roomId, roomExtendedData, res) {
         if(!isNaN(roomId)) {
-            for (let index = 0; index < roomExtendedData.length; index++) {
-                roomExtendedData[index].roomId = roomId;
-            }
-            this.RoomImages.bulkCreate(roomExtendedData).then((room_image) => {
-				if (room_image === undefined || room_image == null || room_image.length == 0)
+			this.Rooms.findOne({
+                where: {id: roomId},
+            }).then(room => {
+				if (room === undefined || room === null || room.length == 0)
 					return res.status(404).json({"message": "No Data Found"});
-				else 
-					return res.json(room_image);
+				else {
+					for (let index = 0; index < roomExtendedData.length; index++) {
+						roomExtendedData[index].roomId = roomId;
+					}
+					this.RoomImages.bulkCreate(roomExtendedData).then((room_image) => {
+						if (room_image === undefined || room_image == null || room_image.length == 0)
+							return res.status(404).json({"message": "No Data Found"});
+						else 
+							return res.json(room_image);
+					}).catch(Sequelize.Error, function (err) {
+						throw Error(err.message);
+					});
+				}
             }).catch(Sequelize.Error, function (err) {
                 throw Error(err.message);
             });
@@ -273,14 +283,24 @@ class RoomModel {
     
     createRoomFacilities(roomId, roomExtendedData, res) {
         if(!isNaN(roomId)) {
-            for (let index = 0; index < roomExtendedData.length; index++) {
-                roomExtendedData[index].roomId = roomId;
-            }
-            this.RoomFacilities.bulkCreate(roomExtendedData).then((room_facility) => {
-				if (room_facility === undefined || room_facility == null || room_facility.length == 0)
+			this.Rooms.findOne({
+                where: {id: roomId},
+            }).then(room => {
+				if (room === undefined || room === null || room.length == 0)
 					return res.status(404).json({"message": "No Data Found"});
-				else 
-					return res.json(room_facility);
+				else {
+					for (let index = 0; index < roomExtendedData.length; index++) {
+						roomExtendedData[index].roomId = roomId;
+					}
+					this.RoomFacilities.bulkCreate(roomExtendedData).then((room_facility) => {
+						if (room_facility === undefined || room_facility == null || room_facility.length == 0)
+							return res.status(404).json({"message": "No Data Found"});
+						else 
+							return res.json(room_facility);
+					}).catch(Sequelize.Error, function (err) {
+						throw Error(err.message);
+					});
+				}
             }).catch(Sequelize.Error, function (err) {
                 throw Error(err.message);
             });
