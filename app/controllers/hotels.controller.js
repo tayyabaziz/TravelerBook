@@ -8,43 +8,93 @@ class HotelController {
 		let page = req.query.page ? req.query.page : 1;
 		let limit = req.query.limit ? req.query.limit : 10;
 		let offset = (page - 1) * limit;
-		HotelService.getAllHotels({offset: offset, limit: limit}, res);
+		try {
+			HotelService.getAllHotels({offset: offset, limit: limit}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	add_hotel(req, res) {
-		HotelService.createHotel({body: req.body}, res);
+		try {
+			HotelService.createHotel({body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	read_hotel(req, res) {
-		HotelService.getHotel({hotelId: req.params.hotelId}, res);
+		try {
+			HotelService.getHotel({hotelId: req.params.hotelId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	update_hotel(req, res) {
-		HotelService.updateHotel({hotelId: req.params.hotelId, body: req.body}, res);
+		try {
+			HotelService.updateHotel({hotelId: req.params.hotelId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	update_hotel_fields(req, res) {
-		HotelService.updateHotelField({hotelId: req.params.hotelId, body: req.body}, res);
+		try {
+			HotelService.updateHotelField({hotelId: req.params.hotelId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	remove_hotel(req, res) {
-		HotelService.removeHotel({hotelId: req.params.hotelId}, res);
+		try {
+			HotelService.removeHotel({hotelId: req.params.hotelId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	read_hotel_images(req, res) {
-		HotelService.getHotelImages({hotelId: req.params.hotelId}, res);
+		try {
+			HotelService.getHotelImages({hotelId: req.params.hotelId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	read_hotel_facilities(req, res) {
-		HotelService.getHotelFacilities({hotelId: req.params.hotelId}, res);
+		try {
+			HotelService.getHotelFacilities({hotelId: req.params.hotelId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	add_hotel_images(req, res) {
-		HotelService.createHotelImages({hotelId: req.params.hotelId, body: req.body}, res);
+		try {
+			HotelService.createHotelImages({hotelId: req.params.hotelId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	add_hotel_facilities(req, res) {
-		HotelService.createHotelFacilities({hotelId: req.params.hotelId, body: req.body}, res);
+		try {
+			HotelService.createHotelFacilities({hotelId: req.params.hotelId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 }
 

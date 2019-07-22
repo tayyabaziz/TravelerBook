@@ -8,43 +8,93 @@ class RoomController {
 		let page = req.query.page ? req.query.page : 1;
 		let limit = req.query.limit ? req.query.limit : 10;
 		let offset = (page - 1) * limit;
-		RoomService.getAllRooms({offset: offset, limit: limit}, res);
+		try {
+			RoomService.getAllRooms({offset: offset, limit: limit}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	add_room(req, res) {
-		RoomService.createRoom({body: req.body}, res);
+		try {
+			RoomService.createRoom({body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	read_room(req, res) {
-		RoomService.getRoom({roomId: req.params.roomId}, res);
+		try {
+			RoomService.getRoom({roomId: req.params.roomId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	update_room(req, res) {
-		RoomService.updateRoom({roomId: req.params.roomId, body: req.body}, res);
+		try {
+			RoomService.updateRoom({roomId: req.params.roomId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	update_room_fields(req, res) {
-		RoomService.updateRoomField({roomId: req.params.roomId, body: req.body}, res);
+		try {
+			RoomService.updateRoomField({roomId: req.params.roomId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	remove_room(req, res) {
-		RoomService.removeRoom({roomId: req.params.roomId}, res);
+		try {
+			RoomService.removeRoom({roomId: req.params.roomId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	read_room_images(req, res) {
-		RoomService.getRoomImages({roomId: req.params.roomId}, res);
+		try {
+			RoomService.getRoomImages({roomId: req.params.roomId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	read_room_facilities(req, res) {
-		RoomService.getRoomFacilities({roomId: req.params.roomId}, res);
+		try {
+			RoomService.getRoomFacilities({roomId: req.params.roomId}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	add_room_images(req, res) {
-		RoomService.createRoomImages({roomId: req.params.roomId, body: req.body}, res);
+		try {
+			RoomService.createRoomImages({roomId: req.params.roomId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 	
 	add_room_facilities(req, res) {
-		RoomService.createRoomFacilities({roomId: req.params.roomId, body: req.body}, res);
+		try {
+			RoomService.createRoomFacilities({roomId: req.params.roomId, body: req.body}, res);
+		}
+		catch(error) {
+			return res.status(400).json({message: error.message});
+		}
 	}
 }
 

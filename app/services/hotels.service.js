@@ -1,61 +1,79 @@
 const HotelModelClass = require('../models/hotels.model');
-const HelperClass = require('../helper/helper.class');
-const Helper = new HelperClass();
 const HotelModel = new HotelModelClass();
 
 class HotelService {
     constructor() { }
 
     getAllHotels(data, res) {
-        HotelModel.getAllHotels(data.offset, data.limit, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
+        try {
+            HotelModel.getAllHotels(data.offset, data.limit, res);
+        } catch (error) {
+            throw Error(error);
+        }
     }
     createHotel(data, res) {
-        HotelModel.createHotel(data.body, function(err, rows) {
-            Helper.formatResult(res, err, rows);
-        });
+        try {
+            HotelModel.createHotel(data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
     }
     getHotel(data, res) {
-    	HotelModel.getHotel(data.hotelId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.getHotel(data.hotelId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     updateHotel(data, res) {
-    	HotelModel.updateHotel(data.hotelId, data.body, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.updateHotel(data.hotelId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     updateHotelField(data, res) {
-    	HotelModel.updateHotelField(data.hotelId, data.body, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.updateHotelField(data.hotelId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     removeHotel(data, res) {
-    	HotelModel.removeHotel(data.hotelId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.removeHotel(data.hotelId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     getHotelImages(data, res) {
-    	HotelModel.getHotelImages(data.hotelId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.getHotelImages(data.hotelId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     getHotelFacilities(data, res) {
-    	HotelModel.getHotelFacilities(data.hotelId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.getHotelFacilities(data.hotelId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     createHotelImages(data, res) {
-    	HotelModel.createHotelImages(data.hotelId, data.body, function(err, rows) {
-		  	Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.createHotelImages(data.hotelId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     createHotelFacilities(data, res) {
-    	HotelModel.createHotelFacilities(data.hotelId, data.body, function(err, rows) {
-		  	Helper.formatResult(res, err, rows);
-		});
-	}
+        try {
+            HotelModel.createHotelFacilities(data.hotelId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
 }
 
 module.exports = HotelService;

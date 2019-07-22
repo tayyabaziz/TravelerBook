@@ -1,7 +1,4 @@
-const HelperClass = require('../helper/helper.class');
 const SequelizeConnection = require('../config/database.config');
-
-const Helper = new HelperClass();
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
 
@@ -66,35 +63,41 @@ class RoomModel {
         this.RoomFacilities.sync();
     }
 
-    getAllRooms(offset, limit, result) {
+    getAllRooms(offset, limit, res) {
         this.Rooms.findAll({
             offset: parseInt(offset),
 			limit: parseInt(limit),
 			include : [this.RoomImages, this.RoomFacilities]
         }).then(rooms => {
-            Helper.handleResult(result, rooms);
+			if (rooms === undefined || rooms.length == 0)
+				return res.status(404).json({"message": "No Data Found"});
+			else 
+				return res.json(rooms);
         }).catch(Sequelize.Error, function (err) {
-            result(err, null);
+            throw Error(err.message);
         });
     }
 
-    getRoom(roomId, result) {
+    getRoom(roomId, res) {
         if(!isNaN(roomId)) {
             this.Rooms.findOne({
                 where: {id: roomId},
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
-                Helper.handleResult(result, room);
+                if (room === undefined || room == null || room.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else 
+					return res.json(room);
             }).catch(Sequelize.Error, function (err) {
-                result(err, null);
+                throw Error(err.message);
             });
         }
         else {
-            result("Incorrect Room Id", null);
+            throw Error("Incorrect Room Id");
         }
     }
     
-    createRoom(roomData, result) {
+    createRoom(roomData, res) {
         var room = {};
         room.roomType = (roomData.roomType != undefined) ? roomData.roomType: null;
         room.desc = (roomData.desc != undefined) ? roomData.desc: null;
@@ -114,177 +117,176 @@ class RoomModel {
         this.Rooms.create(room, {
             include: [this.RoomImages, this.RoomFacilities]
         }).then((roomResponse) => {
-            result(null, roomResponse);
+			if (roomResponse === undefined || roomResponse == null || roomResponse.length == 0)
+				return res.status(404).json({"message": "No Data Found"});
+			else 
+				return res.json(roomResponse);
         }).catch(Sequelize.Error, function (err) {
-            result(err.message, null);
+            throw Error(err.message);
         });
     }
 
-    updateRoom(roomId, roomData, result) {
+    updateRoom(roomId, roomData, res) {
 		if(!isNaN(roomId)) {
             this.Rooms.findOne({
 				where: {id: roomId},
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
-                room.roomType = (roomData.roomType != undefined) ? roomData.roomType: null;
-                room.desc = (roomData.desc != undefined) ? roomData.desc: null;
-                room.bed = (roomData.bed != undefined) ? roomData.bed: null;
-                room.isBreakfastIncluded = (roomData.isBreakfastIncluded != undefined) ? roomData.isBreakfastIncluded: null;
-                room.price = (roomData.price != undefined) ? roomData.price: null;
-                room.discountPrice = (roomData.discountPrice != undefined) ? roomData.discountPrice: null;
-                room.noOfRooms = (roomData.noOfRooms != undefined) ? roomData.noOfRooms: null;
-                room.noOfAdults = (roomData.noOfAdults != undefined) ? roomData.noOfAdults: null;
-                room.noOfChilds = (roomData.noOfChilds != undefined) ? roomData.noOfChilds: null;
-                room.maxCancelationTime = (roomData.maxCancelationTime != undefined) ? roomData.maxCancelationTime: null;
+				if (room === undefined || room == null || room.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else {
+					room.roomType = (roomData.roomType != undefined) ? roomData.roomType: null;
+					room.desc = (roomData.desc != undefined) ? roomData.desc: null;
+					room.bed = (roomData.bed != undefined) ? roomData.bed: null;
+					room.isBreakfastIncluded = (roomData.isBreakfastIncluded != undefined) ? roomData.isBreakfastIncluded: null;
+					room.price = (roomData.price != undefined) ? roomData.price: null;
+					room.discountPrice = (roomData.discountPrice != undefined) ? roomData.discountPrice: null;
+					room.noOfRooms = (roomData.noOfRooms != undefined) ? roomData.noOfRooms: null;
+					room.noOfAdults = (roomData.noOfAdults != undefined) ? roomData.noOfAdults: null;
+					room.noOfChilds = (roomData.noOfChilds != undefined) ? roomData.noOfChilds: null;
+					room.maxCancelationTime = (roomData.maxCancelationTime != undefined) ? roomData.maxCancelationTime: null;
 
-                room.save().then(function() {
-                    result(null, room);
-                }).catch(Sequelize.Error, function (err) {
-                    result(err.message, null);
-                });
+					room.save().then(function() {
+						return res.json(room);
+					}).catch(Sequelize.Error, function (err) {
+						throw Error(err.message);
+					});
+				}
             }).catch(Sequelize.Error, function (err) {
-                result(err, null);
+                throw Error(err.message);
             });
 		}
         else {
-            result("Incorrect Room Id", null);
+            throw Error("Incorrect Room Id");
         }
 	}
-	
-	updateRoom(roomId, roomData, result) {
-		if(!isNaN(roomId)) {
-			this.Rooms.update(
-				{
-					roomType: roomData.roomType,
-					desc: roomData.desc,
-					bed: roomData.bed,
-					isBreakfastIncluded: roomData.isBreakfastIncluded,
-					hotelId: roomData.hotelId,
-					price: roomData.price,
-					discountPrice: roomData.discountPrice,
-					noOfRooms: roomData.noOfRooms,
-					noOfAdults: roomData.noOfAdults,
-					noOfChilds: roomData.noOfChilds,
-					maxCancelationTime: roomData.maxCancelationTime,
-					inactive: roomData.inactive,
-				}, {
-					returning: true,
-					plain: true,
-					where: {id: roomId}
-				}
-			).then(([rowsUpdated, room]) => {
-                Helper.handleResult(result, room);
-            }).catch(Sequelize.Error, function (err) {
-                result(err, null);
-            });
-		}
-		else {
-			result("Incorrect Room Id", null);
-		}
-	}
 
-	updateRoomField(roomId, roomData, result) {
+	updateRoomField(roomId, roomData, res) {
 		if(!isNaN(roomId)) {
             this.Rooms.findOne({
 				where: {id: hotelId},
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
-                for (const key in roomData) {
-                    if (roomData.hasOwnProperty(key)) {
-                        room[key] = (roomData[key] != undefined) ? roomData[key]: null;
-                    }
-                }
-                room.save().then(function() {
-                    result(null, room);
-                }).catch(Sequelize.Error, function (err) {
-                    result(err.message, null);
-                });
+				if (room === undefined || room == null || room.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else {
+					for (const key in roomData) {
+						if (roomData.hasOwnProperty(key)) {
+							room[key] = (roomData[key] != undefined) ? roomData[key]: null;
+						}
+					}
+					room.save().then(function() {
+						return res.json(room);
+					}).catch(Sequelize.Error, function (err) {
+						throw Error(err.message);
+					});
+				}
             }).catch(Sequelize.Error, function (err) {
-                result(err, null);
+                throw Error(err.message);
             });
 		}
 		else {
-			result("Incorrect Room Id", null);
+			throw Error("Incorrect Room Id");
 		}
 	}
 
-	removeRoom(roomId, result) {
+	removeRoom(roomId, res) {
 		if(!isNaN(roomId)) {
             this.Rooms.findOne({
                 where: {id: roomId},
 				include : [this.roomImages, this.roomFacilities]               
             }).then(room => {
-                room.inactive = 1;
-                room.save();
-                Helper.handleResult(result, room);
+				console.log(room);
+				if (room === undefined || room == null || room.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else {
+					room.inactive = 1;
+					room.save().then(function() {
+						return res.json(room);
+					}).catch(Sequelize.Error, function (err) {
+						throw Error(err.message);
+					});
+				}
             }).catch(Sequelize.Error, function (err) {
-                result(err, null);
+                throw Error(err.message);
             });
 		}
 		else {
-			result("Incorrect Room Id", null);
+			throw Error("Incorrect Room Id");
 		}
 	}
 
-    getRoomImages(roomId, result) {
+    getRoomImages(roomId, res) {
         if(!isNaN(roomId)) {
             this.RoomImages.findAll({
                 where: {roomId: roomId}
             }).then(room_images => {
-                Helper.handleResult(result, room_images);
+				if (room_images === undefined || room_images == null || room_images.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else 
+					return res.json(room_images);
             }).catch(Sequelize.Error, function (err) {
-                result(err, null);
+                throw Error(err.message);
             });
         }
         else {
-            result("Incorrect Room Id", null);
+            throw Error("Incorrect Room Id");
         }
 	}
 
-	getRoomFacilities(roomId, result) {
+	getRoomFacilities(roomId, res) {
         if(!isNaN(roomId)) {
             this.RoomFacilities.findAll({
                 where: {roomId: roomId}
             }).then(room_facilities => {
-                Helper.handleResult(result, room_facilities);
+				if (room_facilities === undefined || room_facilities == null || room_facilities.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else 
+					return res.json(room_facilities);
             }).catch(Sequelize.Error, function (err) {
-                result(err, null);
+                throw Error(err.message);
             });
         }
         else {
-            result("Incorrect Room Id", null);
+            throw Error("Incorrect Room Id");
         }
     }
     
-    createRoomImages(roomId, roomExtendedData, result) {
+    createRoomImages(roomId, roomExtendedData, res) {
         if(!isNaN(roomId)) {
             for (let index = 0; index < roomExtendedData.length; index++) {
                 roomExtendedData[index].roomId = roomId;
             }
             this.RoomImages.bulkCreate(roomExtendedData).then((room_image) => {
-                result(null, room_image);
+				if (room_image === undefined || room_image == null || room_image.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else 
+					return res.json(room_image);
             }).catch(Sequelize.Error, function (err) {
-                result(err.message, null);
+                throw Error(err.message);
             });
         }
         else {
-            result("Incorrect room Id", null);
+            throw Error("Incorrect Room Id");
         }
     }
     
-    createRoomFacilities(roomId, roomExtendedData, result) {
+    createRoomFacilities(roomId, roomExtendedData, res) {
         if(!isNaN(roomId)) {
             for (let index = 0; index < roomExtendedData.length; index++) {
                 roomExtendedData[index].roomId = roomId;
             }
             this.RoomFacilities.bulkCreate(roomExtendedData).then((room_facility) => {
-                result(null, room_facility);
+				if (room_facility === undefined || room_facility == null || room_facility.length == 0)
+					return res.status(404).json({"message": "No Data Found"});
+				else 
+					return res.json(room_facility);
             }).catch(Sequelize.Error, function (err) {
-                result(err.message, null);
+                throw Error(err.message);
             });
         }
         else {
-            result("Incorrect Hotel Id", null);
+            throw Error("Incorrect Room Id");
         }
     }
 }

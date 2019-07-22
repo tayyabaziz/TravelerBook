@@ -1,61 +1,79 @@
 const RoomModelClass = require('../models/rooms.model');
-const HelperClass = require('../helper/helper.class');
-const Helper = new HelperClass();
 const RoomModel = new RoomModelClass();
 
 class RoomService {
     constructor() { }
 
     getAllRooms(data, res) {
-        RoomModel.getAllRooms(data.offset, data.limit, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
+        try {
+            RoomModel.getAllRooms(data.offset, data.limit, res);
+        } catch (error) {
+            throw Error(error);
+        }
     }
     createRoom(data, res) {
-        RoomModel.createRoom(data.body, function(err, rows) {
-            Helper.formatResult(res, err, rows);
-        });
+        try {
+            RoomModel.createRoom(data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
     }
     getRoom(data, res) {
-    	RoomModel.getRoom(data.roomId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.getRoom(data.roomId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     updateRoom(data, res) {
-    	RoomModel.updateRoom(data.roomId, data.body, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.updateRoom(data.roomId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     updateRoomField(data, res) {
-    	RoomModel.updateRoomField(data.roomId, data.body, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.updateRoomField(data.roomId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     removeRoom(data, res) {
-    	RoomModel.removeRoom(data.roomId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.removeRoom(data.roomId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     getRoomImages(data, res) {
-    	RoomModel.getRoomImages(data.roomId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.getRoomImages(data.roomId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     getRoomFacilities(data, res) {
-    	RoomModel.getRoomFacilities(data.roomId, function(err, rows) {
-			Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.getRoomFacilities(data.roomId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     createRoomImages(data, res) {
-    	RoomModel.createRoomImages(data.roomId, data.body, function(err, rows) {
-		  	Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.createRoomImages(data.roomId, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
     createRoomFacilities(data, res) {
-    	RoomModel.createRoomFacilities(data.roomId, data.body, function(err, rows) {
-		  	Helper.formatResult(res, err, rows);
-		});
-	}
+    	try {
+            RoomModel.createRoomFacilities(data.roomId, data.body, res);
+        } catch (error) {
+            throw Error(error);
+        }
+    }
 }
 
 module.exports = RoomService;
