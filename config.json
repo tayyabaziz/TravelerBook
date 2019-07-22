@@ -1,6 +1,7 @@
 {
     "environment": "development",
     "appConfig": {
+        "port": 3000,
         "apiLoggingEnable": true,
         "apiContainers": [
             {
