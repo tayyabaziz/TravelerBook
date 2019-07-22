@@ -16,7 +16,7 @@ config.appConfig.forEach(elements => {
 	if(elements.available == true) {
 		logger = logger(elements.apiPath);
 		app.use(function(req, res, next) {
-			var logString = "Request " + req.method + ' ' + req.url + ' body ' + JSON.stringify(req.body) + ' params ' + JSON.stringify(req.params);
+			var logString = "Request " + req.method + ' ' + req.url + ' || body ' + JSON.stringify(req.body) + ' || params ' + JSON.stringify(req.params) + ' || headers ' + JSON.stringify(req.headers);
 			console.log(logString);
 			logger.info(logString);
 			if(req.method == "POST" || req.method == "PUT" || req.method == "PATCH") {
