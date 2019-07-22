@@ -1,85 +1,51 @@
-var HotelModel = require('../models/hotels.model');
-var HelperClass = require('../helper/helper.class');
-var Helper = new HelperClass();
-var Hotel = new HotelModel();
+const HotelServiceClass = require('../services/hotels.service');
+const HotelService = new HotelServiceClass();
 
-exports.list_all_hotels = function(req, res) {
-	let page = 1;
-	let limit = 10;
-	if(!req.query.page) {
-		page = 1;
+class HotelController {
+	constructor() { }
+
+	list_all_hotels(req, res) {
+		let page = req.query.page ? req.query.page : 1;
+		let limit = req.query.limit ? req.query.limit : 10;
+		let offset = (page - 1) * limit;
+		HotelService.getAllHotels({offset: offset, limit: limit}, res);
 	}
-	else {
-		page = req.query.page;
+	
+	add_hotel(req, res) {
+		HotelService.createHotel({body: req.body}, res);
 	}
-
-	if(!req.query.limit) {
-		limit = 10;
+	
+	read_hotel(req, res) {
+		HotelService.getHotel({hotelId: req.params.hotelId}, res);
 	}
-	else {
-		limit = req.query.limit;
+	
+	update_hotel(req, res) {
+		HotelService.updateHotel({hotelId: req.params.hotelId, body: req.body}, res);
 	}
-	let offset = (page - 1) * limit;
-  	Hotel.getAllHotels(offset, limit, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
+	
+	update_hotel_fields(req, res) {
+		HotelService.updateHotelField({hotelId: req.params.hotelId, body: req.body}, res);
+	}
+	
+	remove_hotel(req, res) {
+		HotelService.removeHotel({hotelId: req.params.hotelId}, res);
+	}
+	
+	read_hotel_images(req, res) {
+		HotelService.getHotelImages({hotelId: req.params.hotelId}, res);
+	}
+	
+	read_hotel_facilities(req, res) {
+		HotelService.getHotelFacilities({hotelId: req.params.hotelId}, res);
+	}
+	
+	add_hotel_images(req, res) {
+		HotelService.createHotelImages({hotelId: req.params.hotelId, body: req.body}, res);
+	}
+	
+	add_hotel_facilities(req, res) {
+		HotelService.createHotelFacilities({hotelId: req.params.hotelId, body: req.body}, res);
+	}
+}
 
-exports.add_hotel = function(req, res) {
-	var hotelData = req.body;
-	Hotel.createHotel(hotelData, function(err, rows) {
-	  Helper.formatResult(res, err, rows);
-	});
-};
-
-exports.read_hotel = function(req, res) {
-  	Hotel.getHotel(req.params.hotelId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.update_hotel = function(req, res) {
-	var hotelData = req.body;
-	Hotel.updateHotel(req.params.hotelId, hotelData, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.update_hotel_fields = function(req, res) {
-	var hotelData = req.body;
-	Hotel.updateHotelField(req.params.hotelId, hotelData, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.remove_hotel = function(req, res) {
-	Hotel.removeHotel(req.params.hotelId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.read_hotel_images = function(req, res) {
-  	Hotel.getHotelImages(req.params.hotelId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.read_hotel_facilities = function(req, res) {
-  	Hotel.getHotelFacilities(req.params.hotelId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.add_hotel_images = function(req, res) {
-	var hotelData = req.body;
-	Hotel.createHotelImages(req.params.hotelId, hotelData, function(err, rows) {
-	  Helper.formatResult(res, err, rows);
-	});
-};
-
-exports.add_hotel_facilities = function(req, res) {
-	var hotelData = req.body;
-	Hotel.createHotelFacilities(req.params.hotelId, hotelData, function(err, rows) {
-	  Helper.formatResult(res, err, rows);
-	});
-};
+module.exports = HotelController;

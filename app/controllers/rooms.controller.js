@@ -1,85 +1,51 @@
-var RoomModel = require('../models/rooms.model');
-var HelperClass = require('../helper/helper.class');
-var Helper = new HelperClass();
-var Room = new RoomModel();
+const RoomServiceClass = require('../services/rooms.service');
+const RoomService = new RoomServiceClass();
 
-exports.list_all_rooms = function(req, res) {
-	let page = 1;
-	let limit = 10;
-	if(!req.query.page) {
-		page = 1;
+class RoomController {
+	constructor() { }
+
+	list_all_rooms(req, res) {
+		let page = req.query.page ? req.query.page : 1;
+		let limit = req.query.limit ? req.query.limit : 10;
+		let offset = (page - 1) * limit;
+		RoomService.getAllRooms({offset: offset, limit: limit}, res);
 	}
-	else {
-		page = req.query.page;
+	
+	add_room(req, res) {
+		RoomService.createRoom({body: req.body}, res);
 	}
-
-	if(!req.query.limit) {
-		limit = 10;
+	
+	read_room(req, res) {
+		RoomService.getRoom({roomId: req.params.roomId}, res);
 	}
-	else {
-		limit = req.query.limit;
+	
+	update_room(req, res) {
+		RoomService.updateRoom({roomId: req.params.roomId, body: req.body}, res);
 	}
-	let offset = (page - 1) * limit;
-  	Room.getAllRooms(offset, limit, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
+	
+	update_room_fields(req, res) {
+		RoomService.updateRoomField({roomId: req.params.roomId, body: req.body}, res);
+	}
+	
+	remove_room(req, res) {
+		RoomService.removeRoom({roomId: req.params.roomId}, res);
+	}
+	
+	read_room_images(req, res) {
+		RoomService.getRoomImages({roomId: req.params.roomId}, res);
+	}
+	
+	read_room_facilities(req, res) {
+		RoomService.getRoomFacilities({roomId: req.params.roomId}, res);
+	}
+	
+	add_room_images(req, res) {
+		RoomService.createRoomImages({roomId: req.params.roomId, body: req.body}, res);
+	}
+	
+	add_room_facilities(req, res) {
+		RoomService.createRoomFacilities({roomId: req.params.roomId, body: req.body}, res);
+	}
+}
 
-exports.add_room = function(req, res) {
-	var roomData = req.body;
-	Room.createRoom(roomData, function(err, rows) {
-	  Helper.formatResult(res, err, rows);
-	});
-};
-
-exports.read_room = function(req, res) {
-  	Room.getRoom(req.params.roomId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.update_room = function(req, res) {
-	var roomData = req.query;
-	Room.updateRoom(req.params.roomId, roomData, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.update_room_fields = function(req, res) {
-	var roomData = req.body;
-	Room.updateRoomField(req.params.roomId, roomData, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.remove_room = function(req, res) {
-	Room.removeRoom(req.params.roomId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.read_room_images = function(req, res) {
-  	Room.getRoomImages(req.params.roomId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.read_room_facilities = function(req, res) {
-  	Room.getRoomFacilities(req.params.roomId, function(err, rows) {
-	    Helper.formatResult(res, err, rows);
-  	});
-};
-
-exports.add_room_images = function(req, res) {
-	var roomData = req.body;
-	Room.createRoomImages(req.params.roomId, roomData, function(err, rows) {
-	  Helper.formatResult(res, err, rows);
-	});
-};
-
-exports.add_room_facilities = function(req, res) {
-	var roomData = req.body;
-	Room.createRoomFacilities(req.params.roomId, roomData, function(err, rows) {
-	  Helper.formatResult(res, err, rows);
-	});
-};
+module.exports = RoomController;

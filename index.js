@@ -1,7 +1,8 @@
 const config = require('./config.json');
+var logger = require('./logger');
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');  
+const cors = require('cors');
 
 // create express app
 const app = express();
@@ -13,13 +14,19 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 config.appConfig.forEach(elements => {
 	if(elements.available == true) {
-		var routes = require('./'+elements.apiPath+'/routes/all.routes'); //importing route
-		if(elements.versionNo == "default") {
-			app.use('/api', routes);
-		}
-		else {
-			app.use('/api/'+elements.versionNo, routes);
-		}
+		logger = logger(elements.apiPath);
+		app.use(function(req, res, next) {
+			var logString = "Request " + req.method + ' ' + req.url + ' body ' + JSON.stringify(req.body) + ' params ' + JSON.stringify(req.params);
+			console.log(logString);
+			logger.info(logString);
+			if(req.method == "POST" || req.method == "PUT" || req.method == "PATCH") {
+				console.log("Response "+res);
+				logger.info("Response "+res);
+			}
+			next();
+		});
+		var routes = require(elements.routesPath); //importing route
+		app.use(elements.apiUrlPath, routes);
 	}
 });
 

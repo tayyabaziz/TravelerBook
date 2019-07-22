@@ -1,4 +1,4 @@
-var HelperClass = require('../helper/helper.class');
+const HelperClass = require('../helper/helper.class');
 const SequelizeConnection = require('../config/database.config');
 
 const Helper = new HelperClass();

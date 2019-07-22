@@ -36,6 +36,8 @@
         {
             "versionNo": "default",
             "apiPath": "app",
+            "apiUrlPath": "/api",
+            "routesPath": "./app/routes/all.routes",
             "available": true
         },
         {
