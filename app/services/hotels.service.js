@@ -1,15 +1,16 @@
 const HotelModel = require('../models/hotel.model');
 const HotelImagesModel = require('../models/hotel_images.model');
 const HotelFacilitiesModel = require('../models/hotel_facilities.model');
-const {ResourceNotFoundError, InvalidDataError, DatabaseError, ErrorHandler} = require('../errors/customerrors.errors');
+const {ResourceNotFoundError, InvalidDataError, DatabaseError, ErrorHandler} = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
+const sequelize = SequelizeConnection.sequelize;
 
 class HotelService {
     constructor() {
-        this.Hotels = new HotelModel();
-        this.HotelImages = new HotelImagesModel();
-        this.HotelFacilities = new HotelFacilitiesModel();
+        this.Hotels = new HotelModel(Sequelize, sequelize);
+        this.HotelImages = new HotelImagesModel(Sequelize, sequelize);
+        this.HotelFacilities = new HotelFacilitiesModel(Sequelize, sequelize);
 
         this.Hotels.hasMany(this.HotelImages);
         this.HotelImages.belongsTo(this.Hotels, {
@@ -54,25 +55,12 @@ class HotelService {
             });
         }
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
     
     createHotel(data, res) {
-        var hotel = {};
-        hotel.name = (data.hotelData.name != undefined) ? data.hotelData.name: null;
-        hotel.address = (data.hotelData.address != undefined) ? data.hotelData.address: null;
-        hotel.lat = (data.hotelData.lat != undefined) ? data.hotelData.lat: null;
-        hotel.lng = (data.hotelData.lng != undefined) ? data.hotelData.lng: null;
-        hotel.url_key = (data.hotelData.url_key != undefined) ? data.hotelData.url_key: null;
-        hotel.total_rating = 0;
-        hotel.popularfor = (data.hotelData.popularfor != undefined) ? data.hotelData.popularfor: null;
-        hotel.inactive = 0;
-        hotel.createdAt = (data.hotelData.createdAt != undefined) ? data.hotelData.createdAt: null;
-        hotel.images = (data.hotelData.images != undefined) ? data.hotelData.images: [];
-        hotel.hotel_facilities = (data.hotelData.hotel_facilities != undefined) ? data.hotelData.hotel_facilities: [];
-        
-        this.Hotels.create(hotel, {
+        this.Hotels.create(data.hotelData, {
             include: [this.HotelImages, this.HotelFacilities]
         }).then((hotelResponse) => {
 			if (hotelResponse === undefined || hotelResponse === null || hotelResponse.length == 0)
@@ -93,12 +81,11 @@ class HotelService {
 				if (hotel === undefined || hotel === null || hotel.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);
 				else {
-					hotel.name = (data.hotelData.name != undefined) ? data.hotelData.name: null;
-					hotel.address = (data.hotelData.address != undefined) ? data.hotelData.address: null;
-					hotel.lat = (data.hotelData.lat != undefined) ? data.hotelData.lat: null;
-					hotel.lng = (data.hotelData.lng != undefined) ? data.hotelData.lng: null;
-					hotel.url_key = (data.hotelData.url_key != undefined) ? data.hotelData.url_key: null;
-					hotel.popularfor = (data.hotelData.popularfor != undefined) ? data.hotelData.popularfor: null;
+					for (const key in data.hotelData) {
+						if (data.hotelData.hasOwnProperty(key)) {
+							hotel[key] = data.hotelData[key];
+						}
+					}
 					hotel.save().then(function() {
 						return res.json(hotel);
 					}).catch(Sequelize.Error, function (err) {
@@ -110,7 +97,7 @@ class HotelService {
             });
 		}
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 
@@ -125,7 +112,7 @@ class HotelService {
 				else {
 					for (const key in data.hotelData) {
 						if (data.hotelData.hasOwnProperty(key)) {
-							hotel[key] = (data.hotelData[key] != undefined) ? data.hotelData[key]: null;
+							hotel[key] = data.hotelData[key];
 						}
 					}
 					hotel.save().then(function() {
@@ -139,7 +126,7 @@ class HotelService {
             });
 		}
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 
@@ -164,7 +151,7 @@ class HotelService {
             });
 		}
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 
@@ -182,7 +169,7 @@ class HotelService {
             });
         }
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 
@@ -200,7 +187,7 @@ class HotelService {
             });
         }
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 
@@ -226,7 +213,7 @@ class HotelService {
             });
         }
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 
@@ -252,7 +239,7 @@ class HotelService {
             });
         }
         else {
-            throw new InvalidDataError("Hotel Id");
+            return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
 }

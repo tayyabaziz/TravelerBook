@@ -24,17 +24,16 @@ class DatabaseError extends Error {
     }
 }
 
-
 class ErrorHandler {
     constructor(error, res) {
-        console.log(error.message);
         if(error instanceof DatabaseError) {
-            return res.status(500).json({message: error.message});
+            res.status(500).json({status: 500, message: error.message});
         } else if(error instanceof ResourceNotFoundError) {
-            return res.status(404).json({message: error.message});
-        } else if(error instanceof ResourceNotFoundError) {
-            return res.status(400).json({message: error.message});
+            res.status(404).json({status: 404, message: error.message});
+        } else if(error instanceof InvalidDataError) {
+            res.status(400).json({status: 400, message: error.message});
         }
+        return console.log({status: res.statusCode, message: error.message});
     }
 }
 

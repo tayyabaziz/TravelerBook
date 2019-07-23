@@ -1,15 +1,16 @@
 const RoomModel = require('../models/room.model');
 const RoomImagesModel = require('../models/room_images.model');
 const RoomFacilitiesModel = require('../models/room_facilities.model');
-const {ResourceNotFoundError, InvalidDataError} = require('../errors/customerrors.errors');
+const {ResourceNotFoundError, InvalidDataError, DatabaseError, ErrorHandler} = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
+const sequelize = SequelizeConnection.sequelize;
 
 class RoomService {
     constructor() {
-        this.Rooms = new RoomModel();
-        this.RoomImages = new RoomImagesModel();
-        this.RoomFacilities = new RoomFacilitiesModel();
+        this.Rooms = new RoomModel(Sequelize, sequelize);
+        this.RoomImages = new RoomImagesModel(Sequelize, sequelize);
+        this.RoomFacilities = new RoomFacilitiesModel(Sequelize, sequelize);
 
         this.Rooms.hasMany(this.RoomImages);
         this.RoomImages.belongsTo(this.Rooms, {
@@ -54,28 +55,12 @@ class RoomService {
             });
         }
         else {
-            throw new InvalidDataError("Room Id");
+            return new ErrorHandler(new InvalidDataError("Room Id"), res);
         }
     }
 
     createRoom(data, res) {
-        var room = {};
-        room.roomType = (data.roomData.roomType != undefined) ? data.roomData.roomType: null;
-        room.desc = (data.roomData.desc != undefined) ? data.roomData.desc: null;
-        room.bed = (data.roomData.bed != undefined) ? data.roomData.bed: null;
-        room.isBreakfastIncluded = (data.roomData.isBreakfastIncluded != undefined) ? data.roomData.isBreakfastIncluded: null;
-        room.hotelId = (data.roomData.hotelId != undefined) ? data.roomData.hotelId: null;
-        room.price = (data.roomData.price != undefined) ? data.roomData.price: null;
-        room.discountPrice = (data.roomData.discountPrice != undefined) ? data.roomData.discountPrice: null;
-        room.noOfRooms = (data.roomData.noOfRooms != undefined) ? data.roomData.noOfRooms: null;
-        room.noOfAdults = (data.roomData.noOfAdults != undefined) ? data.roomData.noOfAdults: null;
-        room.noOfChilds = (data.roomData.noOfChilds != undefined) ? data.roomData.noOfChilds: null;
-        room.maxCancelationTime = (data.roomData.maxCancelationTime != undefined) ? data.roomData.maxCancelationTime: null;
-        room.inactive = 0;
-        room.room_images = (data.roomData.room_images != undefined) ? data.roomData.room_images: [];
-        room.room_facilities = (data.roomData.room_facilities != undefined) ? data.roomData.room_facilities: [];
-        
-        this.Rooms.create(room, {
+        this.Rooms.create(data.roomData, {
             include: [this.RoomImages, this.RoomFacilities]
         }).then((roomResponse) => {
 			if (roomResponse === undefined || roomResponse == null || roomResponse.length == 0)
@@ -96,17 +81,11 @@ class RoomService {
 				if (room === undefined || room == null || room.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room"), res);
 				else {
-					room.roomType = (data.roomData.roomType != undefined) ? data.roomData.roomType: null;
-					room.desc = (data.roomData.desc != undefined) ? data.roomData.desc: null;
-					room.bed = (data.roomData.bed != undefined) ? data.roomData.bed: null;
-					room.isBreakfastIncluded = (data.roomData.isBreakfastIncluded != undefined) ? data.roomData.isBreakfastIncluded: null;
-					room.price = (data.roomData.price != undefined) ? data.roomData.price: null;
-					room.discountPrice = (data.roomData.discountPrice != undefined) ? data.roomData.discountPrice: null;
-					room.noOfRooms = (data.roomData.noOfRooms != undefined) ? data.roomData.noOfRooms: null;
-					room.noOfAdults = (data.roomData.noOfAdults != undefined) ? data.roomData.noOfAdults: null;
-					room.noOfChilds = (data.roomData.noOfChilds != undefined) ? data.roomData.noOfChilds: null;
-					room.maxCancelationTime = (data.roomData.maxCancelationTime != undefined) ? data.roomData.maxCancelationTime: null;
-
+					for (const key in data.roomData) {
+						if (data.roomData.hasOwnProperty(key)) {
+							room[key] = data.roomData[key];
+						}
+					}
 					room.save().then(function() {
 						return res.json(room);
 					}).catch(Sequelize.Error, function (err) {
@@ -118,14 +97,14 @@ class RoomService {
             });
 		}
         else {
-            throw new InvalidDataError("Room Id");
+            return new ErrorHandler(new InvalidDataError("Room Id"), res);
         }
     }
 
     updateRoomField(data, res) {
     	if(!isNaN(data.roomId)) {
             this.Rooms.findOne({
-				where: {id: hotelId},
+				where: {id: data.roomId},
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
 				if (room === undefined || room == null || room.length == 0)
@@ -133,7 +112,7 @@ class RoomService {
 				else {
 					for (const key in data.roomData) {
 						if (data.roomData.hasOwnProperty(key)) {
-							room[key] = (data.roomData[key] != undefined) ? data.roomData[key]: null;
+							room[key] = data.roomData[key];
 						}
 					}
 					room.save().then(function() {
@@ -147,7 +126,7 @@ class RoomService {
             });
 		}
 		else {
-			throw new InvalidDataError("Room Id");
+			return new ErrorHandler(new InvalidDataError("Room Id"), res);
 		}
     }
 
@@ -172,7 +151,7 @@ class RoomService {
             });
 		}
 		else {
-			throw new InvalidDataError("Room Id");
+			return new ErrorHandler(new InvalidDataError("Room Id"), res);
 		}
     }
 
@@ -190,7 +169,7 @@ class RoomService {
             });
         }
         else {
-            throw new InvalidDataError("Room Id");
+            return new ErrorHandler(new InvalidDataError("Room Id"), res);
         }
     }
 
@@ -208,7 +187,7 @@ class RoomService {
             });
         }
         else {
-            throw new InvalidDataError("Room Id");
+            return new ErrorHandler(new InvalidDataError("Room Id"), res);
         }
     }
 
@@ -234,7 +213,7 @@ class RoomService {
             });
         }
         else {
-            throw new InvalidDataError("Room Id");
+            return new ErrorHandler(new InvalidDataError("Room Id"), res);
         }
     }
 
@@ -260,7 +239,7 @@ class RoomService {
             });
         }
         else {
-            throw new InvalidDataError("Room Id");
+            return new ErrorHandler(new InvalidDataError("Room Id"), res);
         }
     }
 }

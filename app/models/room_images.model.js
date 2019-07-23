@@ -1,9 +1,5 @@
-const SequelizeConnection = require('../config/database.config');
-const Sequelize = SequelizeConnection.Sequelize;
-const sequelize = SequelizeConnection.sequelize;
-
 class RoomImagesModel {
-    constructor() {
+    constructor(Sequelize, sequelize) {
         var baseTableName = 'room_images';
         var baseTableFields = {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},

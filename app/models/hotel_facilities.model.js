@@ -1,9 +1,5 @@
-const SequelizeConnection = require('../config/database.config');
-const Sequelize = SequelizeConnection.Sequelize;
-const sequelize = SequelizeConnection.sequelize;
-
 class HotelFacilitiesModel {
-    constructor() {
+    constructor(Sequelize, sequelize) {
         var baseTableName = 'hotel_facilities';
         var baseTableFields = {
             id: {type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement : true},
