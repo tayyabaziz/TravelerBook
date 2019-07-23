@@ -1,7 +1,9 @@
 const HotelModel = require('../models/hotel.model');
 const HotelImagesModel = require('../models/hotel_images.model');
 const HotelFacilitiesModel = require('../models/hotel_facilities.model');
-const {ResourceNotFoundError, InvalidDataError, DatabaseError, ErrorHandler} = require('../errors/errors');
+const {ResourceNotFoundError, InvalidDataError, DatabaseError} = require('../errors/errors');
+const ErrorHandler = require('../handlers/error.handler');
+const ResponseHandler = require('../handlers/response.handler');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
@@ -34,7 +36,7 @@ class HotelService {
             if (hotels === undefined || hotels === null || hotels.length == 0)
                 return new ErrorHandler(new ResourceNotFoundError("Hotels"), res);
             else 
-                return res.json(hotels);
+                return new ResponseHandler({status: 200, message: hotels}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
@@ -49,7 +51,7 @@ class HotelService {
                 if (hotel === undefined || hotel === null || hotel.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);
 				else 
-					return res.json(hotel);
+					return new ResponseHandler({status: 200, message: hotel}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -62,11 +64,11 @@ class HotelService {
     createHotel(data, res) {
         this.Hotels.create(data.hotelData, {
             include: [this.HotelImages, this.HotelFacilities]
-        }).then((hotelResponse) => {
-			if (hotelResponse === undefined || hotelResponse === null || hotelResponse.length == 0)
+        }).then((hotel) => {
+			if (hotel === undefined || hotel === null || hotel.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);
 			else 
-				return res.json(hotelResponse);
+				return new ResponseHandler({status: 201, message: hotel}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
@@ -87,7 +89,7 @@ class HotelService {
 						}
 					}
 					hotel.save().then(function() {
-						return res.json(hotel);
+						return new ResponseHandler({status: 200, message: hotel}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -116,7 +118,7 @@ class HotelService {
 						}
 					}
 					hotel.save().then(function() {
-						return res.json(hotel);
+						return new ResponseHandler({status: 200, message: hotel}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -141,7 +143,7 @@ class HotelService {
 				else {
 					hotel.inactive = 1;
 					hotel.save().then(function() {
-						return res.json(hotel);
+						return new ResponseHandler({status: 200, message: hotel}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -163,7 +165,7 @@ class HotelService {
 				if (hotel_images === undefined || hotel_images === null || hotel_images.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel images"), res);
 				else 
-					return res.json(hotel_images);
+                    return new ResponseHandler({status: 200, message: hotel_images}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -181,7 +183,7 @@ class HotelService {
 				if (hotel_facilities === undefined || hotel_facilities === null || hotel_facilities.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel facilities"), res);
 				else 
-					return res.json(hotel_facilities);
+					return new ResponseHandler({status: 200, message: hotel_facilities}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -203,7 +205,7 @@ class HotelService {
 						data.hotelExtendedData[index].hotelId = data.hotelId;
 					}
 					this.HotelImages.bulkCreate(data.hotelExtendedData).then((hotel_image) => {
-						return res.json(hotel_image);
+						return new ResponseHandler({status: 201, message: hotel_image}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -229,7 +231,7 @@ class HotelService {
 						data.hotelExtendedData[index].hotelId = data.hotelId;
 					}
 					this.HotelFacilities.bulkCreate(data.hotelExtendedData).then((hotel_facility) => {
-						return res.json(hotel_facility);
+						return new ResponseHandler({status: 201, message: hotel_facility}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});

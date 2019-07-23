@@ -1,6 +1,8 @@
 const FacilitiesModel = require('../models/facilities.model');
 const RoomModel = require('../models/room.model');
-const {ResourceNotFoundError, InvalidDataError, DatabaseError, ErrorHandler} = require('../errors/errors');
+const {ResourceNotFoundError, InvalidDataError, DatabaseError} = require('../errors/errors');
+const ErrorHandler = require('../handlers/error.handler');
+const ResponseHandler = require('../handlers/response.handler');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
@@ -16,7 +18,7 @@ class FacilitiesService {
 			if (facilities === undefined || facilities.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Facilities"), res);
 			else 
-				return res.json(facilities);
+                return new ResponseHandler({status: 200, message: facilities}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
@@ -30,7 +32,7 @@ class FacilitiesService {
                 if (facility === undefined || facility == null || facility.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Facility"), res);
 				else 
-					return res.json(facility);
+                    return new ResponseHandler({status: 200, message: facility}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -41,11 +43,11 @@ class FacilitiesService {
     }
 
     createFacility(data, res) {
-        this.Facilities.create(data.facilityData).then((facilityResponse) => {
-			if (facilityResponse === undefined || facilityResponse == null || facilityResponse.length == 0)
+        this.Facilities.create(data.facilityData).then((facility) => {
+			if (facility === undefined || facility == null || facility.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Facility"), res);
 			else 
-				return res.json(facilityResponse);
+                return new ResponseHandler({status: 201, message: facility}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
@@ -65,7 +67,7 @@ class FacilitiesService {
 						}
 					}
 					facility.save().then(function() {
-						return res.json(facility);
+						return new ResponseHandler({status: 200, message: facility}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});

@@ -1,7 +1,9 @@
 const RoomModel = require('../models/room.model');
 const RoomImagesModel = require('../models/room_images.model');
 const RoomFacilitiesModel = require('../models/room_facilities.model');
-const {ResourceNotFoundError, InvalidDataError, DatabaseError, ErrorHandler} = require('../errors/errors');
+const {ResourceNotFoundError, InvalidDataError, DatabaseError} = require('../errors/errors');
+const ErrorHandler = require('../handlers/error.handler');
+const ResponseHandler = require('../handlers/response.handler');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
@@ -34,7 +36,7 @@ class RoomService {
 			if (rooms === undefined || rooms.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Rooms"), res);
 			else 
-				return res.json(rooms);
+				return new ResponseHandler({status: 200, message: rooms}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
@@ -49,7 +51,7 @@ class RoomService {
                 if (room === undefined || room == null || room.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room"), res);
 				else 
-					return res.json(room);
+					return new ResponseHandler({status: 200, message: room}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -62,11 +64,11 @@ class RoomService {
     createRoom(data, res) {
         this.Rooms.create(data.roomData, {
             include: [this.RoomImages, this.RoomFacilities]
-        }).then((roomResponse) => {
-			if (roomResponse === undefined || roomResponse == null || roomResponse.length == 0)
+        }).then((room) => {
+			if (room === undefined || room == null || room.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Room"), res);
 			else 
-				return res.json(roomResponse);
+				return new ResponseHandler({status: 201, message: room}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
@@ -87,7 +89,7 @@ class RoomService {
 						}
 					}
 					room.save().then(function() {
-						return res.json(room);
+						return new ResponseHandler({status: 200, message: room}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -116,7 +118,7 @@ class RoomService {
 						}
 					}
 					room.save().then(function() {
-						return res.json(room);
+						return new ResponseHandler({status: 200, message: room}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -141,7 +143,7 @@ class RoomService {
 				else {
 					room.inactive = 1;
 					room.save().then(function() {
-						return res.json(room);
+						return new ResponseHandler({status: 200, message: room}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -163,7 +165,7 @@ class RoomService {
 				if (room_images === undefined || room_images == null || room_images.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room images"), res);
 				else 
-					return res.json(room_images);
+					return new ResponseHandler({status: 200, message: room_images}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -181,7 +183,7 @@ class RoomService {
 				if (room_facilities === undefined || room_facilities == null || room_facilities.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room facilities"), res);
 				else 
-					return res.json(room_facilities);
+					return new ResponseHandler({status: 200, message: room_facilities}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
             });
@@ -203,7 +205,7 @@ class RoomService {
 						data.roomExtendedData[index].roomId = data.roomId;
 					}
 					this.RoomImages.bulkCreate(data.roomExtendedData).then((room_image) => {
-						return res.json(room_image);
+						return new ResponseHandler({status: 201, message: room_image}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -229,7 +231,7 @@ class RoomService {
 						data.roomExtendedData[index].roomId = data.roomId;
 					}
 					this.RoomFacilities.bulkCreate(data.roomExtendedData).then((room_facility) => {
-						return res.json(room_facility);
+						return new ResponseHandler({status: 201, message: room_facility}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
