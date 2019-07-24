@@ -2,7 +2,8 @@
     "environment": "development",
     "appConfig": {
         "port": 3000,
-        "apiLoggingEnable": false,
+        "apiLoggingEnable": true,
+        "compression": true,
         "apiContainers": [
             {
                 "versionNo": "default",
@@ -14,11 +15,6 @@
             {
                 "versionNo": "v1",
                 "apiPath": "app1",
-                "available": false
-            },
-            {
-                "versionNo": "v2",
-                "apiPath": "app2",
                 "available": false
             }
         ]

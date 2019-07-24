@@ -1,5 +1,4 @@
 const FacilitiesModel = require('../models/facilities.model');
-const RoomModel = require('../models/room.model');
 const {ResourceNotFoundError, InvalidDataError, DatabaseError} = require('../errors/errors');
 const ErrorHandler = require('../handlers/error.handler');
 const ResponseHandler = require('../handlers/response.handler');
@@ -9,7 +8,6 @@ const sequelize = SequelizeConnection.sequelize;
 
 class FacilitiesService {
     constructor() {
-        this.Rooms = new RoomModel(Sequelize, sequelize);
         this.Facilities = new FacilitiesModel(Sequelize, sequelize);
     }
 

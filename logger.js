@@ -11,14 +11,24 @@ var day  = date.getDate();
 day = (day < 10 ? "0" : "") + day;
 var LogDateTime = year+"-"+month+"-"+day;
 
-module.exports = function(apiPath) {
+var loggerFunction = function(apiPath) {
   var filename = __dirname+"/"+apiPath+'/logs/log-'+LogDateTime+'.log';
 
   log4js.configure({
-    appenders: { log: { type: 'file', filename: filename } },
-    categories: { default: { appenders: ['log'], level: 'debug' } }
+    appenders: { 
+      file: { type: 'file', filename: filename },
+      console: { type: 'console' }
+    },
+    categories: { 
+      default: { appenders: ['file', 'console'], level: 'ALL' } 
+    }
   });
   
-  const logger = log4js.getLogger('log');
-  return logger
+  const logger = log4js.getLogger('logs');
+  return logger;
+}
+
+module.exports = {
+  loggerFunction, 
+  log4js
 }

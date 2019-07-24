@@ -3,13 +3,21 @@ const {ResourceNotFoundError, InvalidDataError, DatabaseError} = require('../err
 class ErrorHandler {
     constructor(error, res) {
         if(error instanceof DatabaseError) {
-            res.status(500).json({status: 500, message: error.message});
+            res.status(500).json({status: 500, message: "Internal Server Error"});
         } else if(error instanceof ResourceNotFoundError) {
             res.status(404).json({status: 404, message: error.message});
         } else if(error instanceof InvalidDataError) {
             res.status(400).json({status: 400, message: error.message});
         }
-        return console.log({status: res.statusCode, message: error.message});
+        
+        var logString = "Status: " + res.statusCode + ', Message: ' + error.message;
+        if(res.logger) {
+            res.logger.error(logString);
+        }
+        else {
+            console.log(logString);
+        }
+        return res.end();
     }
 }
 
