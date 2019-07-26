@@ -20,7 +20,7 @@
         ]
     },
     "dbConfig": {
-        "dbLoggingEnable": false,
+        "dbLoggingEnable": true,
         "development": {
             "username": "root",
             "password": "",
