@@ -19,7 +19,7 @@ class RoomService {
 			as: 'RoomImages',
             foreignKey: 'roomId'
         });
-        
+
         this.Rooms.hasMany(this.RoomFacilities);
         this.RoomFacilities.belongsTo(this.Rooms, {
 			as: 'RoomFacilities',
@@ -30,27 +30,33 @@ class RoomService {
     getAllRooms(data, res) {
         this.Rooms.findAll({
             offset: parseInt(data.offset),
-			limit: parseInt(data.limit),
+            limit: parseInt(data.limit),
+            where: {
+                inactive: { $or: [0, null] }
+            },
 			include : [this.RoomImages, this.RoomFacilities]
         }).then(rooms => {
 			if (rooms === undefined || rooms.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Rooms"), res);
-			else 
+			else
 				return new ResponseHandler({status: 200, message: rooms}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
         });
     }
-    
+
     getRoom(data, res) {
     	if(!isNaN(data.roomId)) {
             this.Rooms.findOne({
-                where: {id: data.roomId},
+                where: {
+                    id: data.roomId,
+                    inactive: { $or: [0, null] }
+                },
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
                 if (room === undefined || room == null || room.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room"), res);
-				else 
+				else
 					return new ResponseHandler({status: 200, message: room}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -67,7 +73,7 @@ class RoomService {
         }).then((room) => {
 			if (room === undefined || room == null || room.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Room"), res);
-			else 
+			else
 				return new ResponseHandler({status: 201, message: room}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -77,7 +83,10 @@ class RoomService {
     updateRoom(data, res) {
     	if(!isNaN(data.roomId)) {
             this.Rooms.findOne({
-				where: {id: data.roomId},
+                where: {
+                    id: data.roomId,
+                    inactive: { $or: [0, null] }
+                },
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
 				if (room === undefined || room == null || room.length == 0)
@@ -106,7 +115,10 @@ class RoomService {
     updateRoomField(data, res) {
     	if(!isNaN(data.roomId)) {
             this.Rooms.findOne({
-				where: {id: data.roomId},
+                where: {
+                    id: data.roomId,
+                    inactive: { $or: [0, null] }
+                },
 				include : [this.RoomImages, this.RoomFacilities]
             }).then(room => {
 				if (room === undefined || room == null || room.length == 0)
@@ -135,15 +147,18 @@ class RoomService {
     removeRoom(data, res) {
     	if(!isNaN(data.roomId)) {
             this.Rooms.findOne({
-                where: {id: data.roomId},
-				include : [this.roomImages, this.roomFacilities]               
+                where: {
+                    id: data.roomId,
+                    inactive: { $or: [0, null] }
+                },
+				include : [this.roomImages, this.roomFacilities]
             }).then(room => {
 				if (room === undefined || room == null || room.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room"), res);
 				else {
 					room.inactive = 1;
 					room.save().then(function() {
-						return new ResponseHandler({status: 200, message: room}, res);
+						return new ResponseHandler({status: 204, message: "Delete Successfully"}, res);
 					}).catch(Sequelize.Error, function (err) {
 						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
 					});
@@ -160,11 +175,14 @@ class RoomService {
     getRoomImages(data, res) {
     	if(!isNaN(data.roomId)) {
             this.RoomImages.findAll({
-                where: {roomId: data.roomId}
+                where: {
+                    roomId: data.roomId,
+                    inactive: { $or: [0, null] }
+                }
             }).then(room_images => {
 				if (room_images === undefined || room_images == null || room_images.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room images"), res);
-				else 
+				else
 					return new ResponseHandler({status: 200, message: room_images}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -178,11 +196,14 @@ class RoomService {
     getRoomFacilities(data, res) {
     	if(!isNaN(data.roomId)) {
             this.RoomFacilities.findAll({
-                where: {roomId: data.roomId}
+                where: {
+                    roomId: data.roomId,
+                    inactive: { $or: [0, null] }
+                }
             }).then(room_facilities => {
 				if (room_facilities === undefined || room_facilities == null || room_facilities.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room facilities"), res);
-				else 
+				else
 					return new ResponseHandler({status: 200, message: room_facilities}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -196,7 +217,10 @@ class RoomService {
     createRoomImages(data, res) {
     	if(!isNaN(data.roomId)) {
 			this.Rooms.findOne({
-                where: {id: data.roomId},
+                where: {
+                    id: data.roomId,
+                    inactive: { $or: [0, null] }
+                },
             }).then(room => {
 				if (room === undefined || room === null || room.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room"), res);
@@ -222,7 +246,10 @@ class RoomService {
     createRoomFacilities(data, res) {
     	if(!isNaN(data.roomId)) {
 			this.Rooms.findOne({
-                where: {id: data.roomId},
+                where: {
+                    id: data.roomId,
+                    inactive: { $or: [0, null] }
+                },
             }).then(room => {
 				if (room === undefined || room === null || room.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Room"), res);

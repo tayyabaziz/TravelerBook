@@ -15,4 +15,9 @@ router.get('/hotel/:hotelId/facilities', HotelController.read_hotel_facilities);
 router.post('/hotel/:hotelId/images', HotelController.add_hotel_images);
 router.post('/hotel/:hotelId/facilities', HotelController.add_hotel_facilities);
 
+const HotelRoomsControllerClass = require('../controllers/hotelrooms.controller');
+const HotelRoomsController = new HotelRoomsControllerClass();
+
+router.get('/hotel/:hotelId/rooms', HotelRoomsController.read_hotel_rooms);
+
 module.exports = router;

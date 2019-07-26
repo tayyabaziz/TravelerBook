@@ -19,7 +19,7 @@ class HotelService {
 			as: 'HotelImages',
             foreignKey: 'hotelId'
         });
-        
+
         this.Hotels.hasMany(this.HotelFacilities);
         this.HotelFacilities.belongsTo(this.Hotels, {
 			as: 'HotelFacilities',
@@ -29,13 +29,16 @@ class HotelService {
 
     getAllHotels(data, res) {
         this.Hotels.findAll({
+            where: {
+                inactive: { $or: [0, null] }
+            },
             offset: parseInt(data.offset),
 			limit: parseInt(data.limit),
 			include : [this.HotelImages, this.HotelFacilities]
         }).then(hotels => {
             if (hotels === undefined || hotels === null || hotels.length == 0)
                 return new ErrorHandler(new ResourceNotFoundError("Hotels"), res);
-            else 
+            else
                 return new ResponseHandler({status: 200, message: hotels}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -45,12 +48,15 @@ class HotelService {
     getHotel(data, res) {
         if(!isNaN(data.hotelId)) {
             this.Hotels.findOne({
-				where: {id: data.hotelId},
+                where: {
+                    id: data.hotelId,
+                    inactive: { $or: [0, null] }
+                },
 				include : [this.HotelImages, this.HotelFacilities]
             }).then(hotel => {
                 if (hotel === undefined || hotel === null || hotel.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);
-				else 
+				else
 					return new ResponseHandler({status: 200, message: hotel}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -60,14 +66,14 @@ class HotelService {
             return new ErrorHandler(new InvalidDataError("Hotel Id"), res);
         }
     }
-    
+
     createHotel(data, res) {
         this.Hotels.create(data.hotelData, {
             include: [this.HotelImages, this.HotelFacilities]
         }).then((hotel) => {
 			if (hotel === undefined || hotel === null || hotel.length == 0)
 				return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);
-			else 
+			else
 				return new ResponseHandler({status: 201, message: hotel}, res);
         }).catch(Sequelize.Error, function (err) {
             return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -77,7 +83,10 @@ class HotelService {
     updateHotel(data, res) {
         if(!isNaN(data.hotelId)) {
             this.Hotels.findOne({
-				where: {id: data.hotelId},
+                where: {
+                    id: data.hotelId,
+                    inactive: { $or: [0, null] }
+                },
 				include : [this.HotelImages, this.HotelFacilities]
             }).then(hotel => {
 				if (hotel === undefined || hotel === null || hotel.length == 0)
@@ -106,7 +115,10 @@ class HotelService {
     updateHotelField(data, res) {
         if(!isNaN(data.hotelId)) {
 			this.Hotels.findOne({
-				where: {id: data.hotelId},
+                where: {
+                    id: data.hotelId,
+                    inactive: { $or: [0, null] }
+                },
 				include : [this.HotelImages, this.HotelFacilities]
             }).then(hotel => {
 				if (hotel === undefined || hotel === null || hotel.length == 0)
@@ -135,8 +147,11 @@ class HotelService {
     removeHotel(data, res) {
         if(!isNaN(data.hotelId)) {
             this.Hotels.findOne({
-                where: {id: data.hotelId},
-				include : [this.HotelImages, this.HotelFacilities]               
+                where: {
+                    id: data.hotelId,
+                    inactive: { $or: [0, null] }
+                },
+				include : [this.HotelImages, this.HotelFacilities]
             }).then(hotel => {
 				if (hotel === undefined || hotel === null || hotel.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);
@@ -160,11 +175,14 @@ class HotelService {
     getHotelImages(data, res) {
         if(!isNaN(data.hotelId)) {
             this.HotelImages.findAll({
-                where: {hotelId: data.hotelId}
+                where: {
+                    hotelId: data.hotelId,
+                    inactive: { $or: [0, null] }
+                }
             }).then(hotel_images => {
 				if (hotel_images === undefined || hotel_images === null || hotel_images.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel images"), res);
-				else 
+				else
                     return new ResponseHandler({status: 200, message: hotel_images}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -178,11 +196,14 @@ class HotelService {
     getHotelFacilities(data, res) {
         if(!isNaN(data.hotelId)) {
             this.HotelFacilities.findAll({
-                where: {hotelId: data.hotelId}
+                where: {
+                    hotelId: data.hotelId,
+                    inactive: { $or: [0, null] }
+                }
             }).then(hotel_facilities => {
 				if (hotel_facilities === undefined || hotel_facilities === null || hotel_facilities.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel facilities"), res);
-				else 
+				else
 					return new ResponseHandler({status: 200, message: hotel_facilities}, res);
             }).catch(Sequelize.Error, function (err) {
                 return new ErrorHandler(new DatabaseError(err.message, err.name), res);
@@ -196,7 +217,10 @@ class HotelService {
     createHotelImages(data, res) {
         if(!isNaN(data.hotelId)) {
 			this.Hotels.findOne({
-                where: {id: data.hotelId},
+                where: {
+                    id: data.hotelId,
+                    inactive: { $or: [0, null] }
+                },
             }).then(hotel => {
 				if (hotel === undefined || hotel === null || hotel.length == 0)
 					return new ErrorHandler(new ResourceNotFoundError("Hotel"), res);

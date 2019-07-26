@@ -30,11 +30,13 @@ config.appConfig.apiContainers.forEach(elements => {
 				if(req.method == "POST" || req.method == "PUT" || req.method == "PATCH") {
 					logger.info("Response "+res);
 				}
+				req.logger = logger;
+				res.logger = logger;
 				next();
 			});
-			
-			const loggerMiddleware = (req, res, next) => { req.logger = logger; res.logger = logger; next()};
-			app.use(loggerMiddleware);
+
+			// const loggerMiddleware = (req, res, next) => { req.logger = logger; res.logger = logger; next()};
+			// app.use(loggerMiddleware);
 		}
 		else {
 			// const loggerMiddleware = (req, res, next) => { req.logger = false; res.logger = false; next()};
