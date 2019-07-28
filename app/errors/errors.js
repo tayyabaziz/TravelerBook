@@ -24,8 +24,24 @@ class DatabaseError extends Error {
     }
 }
 
+
+class AuthenticationError extends Error {
+    constructor() {
+        super("Authentication Failed");
+    }
+}
+
+
+class AuthorizationError extends Error {
+    constructor() {
+        super("Authorization Failed");
+    }
+}
+
 module.exports = {
     ResourceNotFoundError,
     InvalidDataError,
-    DatabaseError    
+    DatabaseError,
+    AuthenticationError,
+    AuthorizationError
 };

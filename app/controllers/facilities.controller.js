@@ -1,29 +1,51 @@
 const FacilitiesServiceClass = require('../services/facilities.service');
+const ErrorHandler = require('../handlers/error.handler');
+const ResponseHandler = require('../handlers/response.handler');
 const FacilitiesService = new FacilitiesServiceClass();
 
 class FacilitiesController {
 	constructor() { }
 
-	list_all_facilities(req, res) {
-		return FacilitiesService.getAllFacilities(res);
+	async list_all_facilities(req, res) {
+		try {
+			var data = await FacilitiesService.getAllFacilities();
+			new ResponseHandler({ status: 200, message: data }, res);
+		} catch (err) {
+			new ErrorHandler(err, res);
+		}
 	}
-	
-	read_facility(req, res) {
-		return FacilitiesService.getFacility({facilityId: req.params.facilityId}, res);
+
+	async read_facility(req, res) {
+		try {
+			var data = await FacilitiesService.getFacility({ facilityId: req.params.facilityId });
+			new ResponseHandler({ status: 200, message: data }, res);
+		} catch (err) {
+			new ErrorHandler(err, res);
+		}
 	}
-	
-	add_facility(req, res) {
-		var facilityData = req.body;
-		var facility = {};
-        facility.facility = (facilityData.facility != undefined) ? facilityData.facility: null;
-		return FacilitiesService.createFacility({facilityData: facility}, res);
+
+	async add_facility(req, res) {
+		try {
+			var facilityData = req.body;
+			var facility = {};
+			facility.facility = (facilityData.facility != undefined) ? facilityData.facility : null;
+			var data = await FacilitiesService.createFacility({ facilityData: facility });
+			new ResponseHandler({ status: 201, message: data }, res);
+		} catch (err) {
+			new ErrorHandler(err, res);
+		}
 	}
-	
-	update_facility(req, res) {
-		var facilityData = req.body;
-		var facility = {};
-        facility.facility = (facilityData.facility != undefined) ? facilityData.facility: null;
-		return FacilitiesService.updateFacility({facilityId: req.params.facilityId, facilityData: facility}, res);
+
+	async update_facility(req, res) {
+		try {
+			var facilityData = req.body;
+			var facility = {};
+			facility.facility = (facilityData.facility != undefined) ? facilityData.facility : null;
+			var data = await FacilitiesService.updateFacility({ facilityId: req.params.facilityId, facilityData: facility });
+			new ResponseHandler({ status: 200, message: data }, res);
+		} catch (err) {
+			new ErrorHandler(err, res);
+		}
 	}
 }
 
