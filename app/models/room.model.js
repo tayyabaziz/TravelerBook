@@ -8,11 +8,11 @@ class RoomModel {
             bed: { type: Sequelize.INTEGER },
             isBreakfastIncluded: { type: Sequelize.INTEGER },
             hotelId: { type: Sequelize.INTEGER, allowNull: false},
-			price: { type: Sequelize.DECIMAL },
-			discountPrice: { type: Sequelize.DECIMAL },
+            price: { type: Sequelize.DECIMAL },
+            discountPrice: { type: Sequelize.DECIMAL },
             noOfRooms: { type: Sequelize.INTEGER },
-			noOfAdults: { type: Sequelize.INTEGER },
-			noOfChilds: { type: Sequelize.INTEGER },
+            noOfAdults: { type: Sequelize.INTEGER },
+            noOfChilds: { type: Sequelize.INTEGER },
             maxCancelationTime: { type: Sequelize.DATE },
             inactive: { type: Sequelize.INTEGER, allowNull: false},
         };
@@ -21,7 +21,7 @@ class RoomModel {
             freezeTableName: true,
             timestamps: false
         };
-        
+
         var RoomModel = sequelize.define(baseTableName, baseTableFields, baseTableOptions);
         RoomModel.sync();
 
