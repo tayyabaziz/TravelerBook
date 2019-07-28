@@ -1,6 +1,4 @@
-const HotelModel = require('../models/hotel.model');
-const HotelImagesModel = require('../models/hotel_images.model');
-const HotelFacilitiesModel = require('../models/hotel_facilities.model');
+const { HotelModel, HotelFacilitiesModel, HotelImagesModel } = require('../models/all.models');
 const { ResourceNotFoundError, InvalidDataError, DatabaseError } = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
@@ -14,13 +12,13 @@ class HotelService {
 
         this.Hotels.hasMany(this.HotelImages);
         this.HotelImages.belongsTo(this.Hotels, {
-            as: 'HotelImages',
+            as: 'H',
             foreignKey: 'hotelId'
         });
 
         this.Hotels.hasMany(this.HotelFacilities);
         this.HotelFacilities.belongsTo(this.Hotels, {
-            as: 'HotelFacilities',
+            as: 'H',
             foreignKey: 'hotelId'
         });
     }
@@ -187,8 +185,7 @@ class HotelService {
             if (!isNaN(data.hotelId)) {
                 this.HotelImages.findAll({
                     where: {
-                        hotelId: data.hotelId,
-                        inactive: { $or: [0, null] }
+                        hotelId: data.hotelId
                     }
                 }).then(hotel_images => {
                     if (hotel_images === undefined || hotel_images === null || hotel_images.length == 0)
@@ -210,8 +207,7 @@ class HotelService {
             if (!isNaN(data.hotelId)) {
                 this.HotelFacilities.findAll({
                     where: {
-                        hotelId: data.hotelId,
-                        inactive: { $or: [0, null] }
+                        hotelId: data.hotelId
                     }
                 }).then(hotel_facilities => {
                     if (hotel_facilities === undefined || hotel_facilities === null || hotel_facilities.length == 0)
@@ -263,7 +259,10 @@ class HotelService {
         return new Promise((resolve, reject) => {
             if (!isNaN(data.hotelId)) {
                 this.Hotels.findOne({
-                    where: { id: data.hotelId },
+                    where: {
+                        id: data.hotelId,
+                        inactive: { $or: [0, null] }
+                    },
                 }).then(hotel => {
                     if (hotel === undefined || hotel === null || hotel.length == 0)
                         reject(new ResourceNotFoundError("Hotel"));

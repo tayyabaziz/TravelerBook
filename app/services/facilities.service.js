@@ -1,4 +1,4 @@
-const FacilitiesModel = require('../models/facilities.model');
+const { FacilitiesModel } = require('../models/all.models');
 const { ResourceNotFoundError, InvalidDataError, DatabaseError } = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;

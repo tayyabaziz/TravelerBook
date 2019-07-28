@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 
-
 const AuthMiddlewareClass = require('../middlewares/auth.middleware');
 const AuthMiddleware = new AuthMiddlewareClass();
 

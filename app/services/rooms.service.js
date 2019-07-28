@@ -1,6 +1,4 @@
-const RoomModel = require('../models/room.model');
-const RoomImagesModel = require('../models/room_images.model');
-const RoomFacilitiesModel = require('../models/room_facilities.model');
+const { RoomModel, RoomFacilitiesModel, RoomImagesModel } = require('../models/all.models');
 const { ResourceNotFoundError, InvalidDataError, DatabaseError } = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
@@ -14,13 +12,13 @@ class RoomService {
 
         this.Rooms.hasMany(this.RoomImages);
         this.RoomImages.belongsTo(this.Rooms, {
-            as: 'RoomImages',
+            as: 'R',
             foreignKey: 'roomId'
         });
 
         this.Rooms.hasMany(this.RoomFacilities);
         this.RoomFacilities.belongsTo(this.Rooms, {
-            as: 'RoomFacilities',
+            as: 'R',
             foreignKey: 'roomId'
         });
     }
@@ -187,8 +185,7 @@ class RoomService {
             if (!isNaN(data.roomId)) {
                 this.RoomImages.findAll({
                     where: {
-                        roomId: data.roomId,
-                        inactive: { $or: [0, null] }
+                        roomId: data.roomId
                     }
                 }).then(room_images => {
                     if (room_images === undefined || room_images == null || room_images.length == 0)
@@ -210,8 +207,7 @@ class RoomService {
             if (!isNaN(data.roomId)) {
                 this.RoomFacilities.findAll({
                     where: {
-                        roomId: data.roomId,
-                        inactive: { $or: [0, null] }
+                        roomId: data.roomId
                     }
                 }).then(room_facilities => {
                     if (room_facilities === undefined || room_facilities == null || room_facilities.length == 0)

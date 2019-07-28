@@ -1,5 +1,4 @@
-const HotelModel = require('../models/hotel.model');
-const RoomsModel = require('../models/room.model');
+const { HotelModel, RoomModel } = require('../models/all.models');
 const { ResourceNotFoundError, InvalidDataError, DatabaseError } = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
@@ -8,11 +7,11 @@ const sequelize = SequelizeConnection.sequelize;
 class HotelRoomsService {
     constructor() {
         this.Hotels = new HotelModel(Sequelize, sequelize);
-        this.Rooms = new RoomsModel(Sequelize, sequelize);
+        this.Rooms = new RoomModel(Sequelize, sequelize);
 
         this.Hotels.hasMany(this.Rooms);
         this.Rooms.belongsTo(this.Hotels, {
-            as: 'R',
+            as: 'H',
             foreignKey: 'hotelId'
         });
     }
