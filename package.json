@@ -1,39 +1,39 @@
 {
-  "name": "travelerbook",
-  "version": "1.0.0",
-  "description": "Hotel Booking",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon index.js"
-  },
-  "keywords": [
-    "TravelerBook",
-    "NodeJS",
-    "RestAPI",
-    "MySQL",
-    "Sequelize"
-  ],
-  "author": "Tayyab Aziz",
-  "license": "MIT",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "compression": "^1.7.4",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "log4js": "^4.5.1",
-    "memory-cache": "^0.2.0",
-    "mysql2": "^1.6.5",
-    "nodemon": "^1.19.1",
-    "pg": "^7.12.0",
-    "sequelize": "^5.11.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tayyabaziz/TravelerBook.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tayyabaziz/TravelerBook/issues"
-  },
-  "homepage": "https://github.com/tayyabaziz/TravelerBook#readme",
-  "devDependencies": {}
+    "name": "travelerbook",
+    "version": "1.0.0",
+    "description": "Hotel Booking",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon index.js"
+    },
+    "keywords": [
+        "TravelerBook",
+        "NodeJS",
+        "RestAPI",
+        "MySQL",
+        "Sequelize"
+    ],
+    "author": "Tayyab Aziz",
+    "license": "MIT",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "compression": "^1.7.4",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "log4js": "^4.5.1",
+        "memory-cache": "^0.2.0",
+        "mysql2": "^1.6.5",
+        "nodemon": "^1.19.1",
+        "pg": "^7.12.0",
+        "sequelize": "^5.11.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tayyabaziz/TravelerBook.git"
+    },
+    "bugs": {
+        "url": "https://github.com/tayyabaziz/TravelerBook/issues"
+    },
+    "homepage": "https://github.com/tayyabaziz/TravelerBook#readme",
+    "devDependencies": {}
 }
