@@ -5,6 +5,7 @@ const RoomModel = require('./room.model');
 const RoomFacilitiesModel = require('./room_facilities.model');
 const RoomImagesModel = require('./room_images.model');
 const FacilitiesModel = require('./facilities.model');
+const UsersAuthKeyModel = require('./users_auth_key.model');
 
 module.exports = {
     HotelModel,
@@ -13,5 +14,6 @@ module.exports = {
     RoomModel,
     RoomFacilitiesModel,
     RoomImagesModel,
-    FacilitiesModel
+    FacilitiesModel,
+    UsersAuthKeyModel
 }
