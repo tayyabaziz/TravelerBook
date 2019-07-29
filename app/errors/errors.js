@@ -6,7 +6,7 @@ class ResourceNotFoundError extends Error {
 
 class InvalidDataError extends Error {
     constructor(message) {
-        super(message ? "Bad Request: Invalid " + message : "Bad Request");
+        super(message ? "Invalid " + message : "Bad Request");
     }
 }
 
