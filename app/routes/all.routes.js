@@ -1,9 +1,11 @@
 const express = require('express');
-
 const app = express();
 
-app.use(require('./hotels.route'));
-app.use(require('./rooms.route'));
-app.use(require('./facilities.route'));
+const AuthMiddlewareClass = require('../middlewares/auth.middleware');
+const AuthMiddleware = new AuthMiddlewareClass();
+
+app.use(AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, require('./hotels.route'));
+app.use(AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, require('./rooms.route'));
+app.use(AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, require('./facilities.route'));
 
 module.exports = app

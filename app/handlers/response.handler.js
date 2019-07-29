@@ -1,9 +1,10 @@
 class ResponseHandler {
-    constructor(data, res) {
-        res.status(data.status).json({status: data.status, message: data.message});
+    constructor(data, requestMethod, res) {
+        var statusCode = requestMethod == "POST" ? 201 : 200;
+        res.status(statusCode).json({ status: statusCode, message: data });
 
-        var logString = "Status: " + data.status + ', Message: ' + "Data Return Successfully";
-        if(res.logger) {
+        var logString = `Status: ${statusCode}, Message: Data Return Successfully`;
+        if (res.logger) {
             res.logger.info(logString);
         }
         else {

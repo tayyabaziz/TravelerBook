@@ -1,7 +1,5 @@
-const FacilitiesModel = require('../models/facilities.model');
-const {ResourceNotFoundError, InvalidDataError, DatabaseError} = require('../errors/errors');
-const ErrorHandler = require('../handlers/error.handler');
-const ResponseHandler = require('../handlers/response.handler');
+const { FacilitiesModel } = require('../models/all.models');
+const { ResourceNotFoundError, InvalidDataError, DatabaseError } = require('../errors/errors');
 const SequelizeConnection = require('../config/database.config');
 const Sequelize = SequelizeConnection.Sequelize;
 const sequelize = SequelizeConnection.sequelize;
@@ -11,71 +9,75 @@ class FacilitiesService {
         this.Facilities = new FacilitiesModel(Sequelize, sequelize);
     }
 
-    getAllFacilities(res) {
-        this.Facilities.findAll().then(facilities => {
-			if (facilities === undefined || facilities.length == 0)
-				return new ErrorHandler(new ResourceNotFoundError("Facilities"), res);
-			else 
-                return new ResponseHandler({status: 200, message: facilities}, res);
-        }).catch(Sequelize.Error, function (err) {
-            return new ErrorHandler(new DatabaseError(err.message, err.name), res);
+    getAllFacilities() {
+        return new Promise((resolve, reject) => {
+            this.Facilities.findAll().then(facilities => {
+                if (facilities === undefined || facilities.length == 0)
+                    reject(new ResourceNotFoundError("Facilities"));
+                else
+                    resolve(facilities);
+            }).catch(Sequelize.Error, function (err) {
+                reject(new DatabaseError(err.message, err.name));
+            });
         });
     }
-    
-    getFacility(data, res) {
-    	if(!isNaN(data.facilityId)) {
+
+    getFacility(data) {
+        return new Promise((resolve, reject) => {
+            if (!isNaN(data.facilityId)) {
+                this.Facilities.findOne({
+                    where: { id: data.facilityId }
+                }).then(facility => {
+                    if (facility === undefined || facility == null || facility.length == 0)
+                        reject(new ResourceNotFoundError("Facility"));
+                    else
+                        resolve(facility);
+                }).catch(Sequelize.Error, function (err) {
+                    reject(new DatabaseError(err.message, err.name));
+                });
+            }
+            else {
+                reject(new InvalidDataError("Facility Id"));
+            }
+        });
+    }
+
+    createFacility(data) {
+        this.Facilities.create(data.facilityData).then((facility) => {
+            if (facility === undefined || facility == null || facility.length == 0)
+                reject(new ResourceNotFoundError("Facility"));
+            else
+                resolve(facility);
+        }).catch(Sequelize.Error, function (err) {
+            reject(new DatabaseError(err.message, err.name));
+        });
+    }
+
+    updateFacility(data) {
+        if (!isNaN(data.facilityId)) {
             this.Facilities.findOne({
-                where: {id: data.facilityId}
+                where: { id: data.facilityId }
             }).then(facility => {
                 if (facility === undefined || facility == null || facility.length == 0)
-					return new ErrorHandler(new ResourceNotFoundError("Facility"), res);
-				else 
-                    return new ResponseHandler({status: 200, message: facility}, res);
-            }).catch(Sequelize.Error, function (err) {
-                return new ErrorHandler(new DatabaseError(err.message, err.name), res);
-            });
-        }
-        else {
-            return new ErrorHandler(new InvalidDataError("Facility Id"), res);
-        }
-    }
-
-    createFacility(data, res) {
-        this.Facilities.create(data.facilityData).then((facility) => {
-			if (facility === undefined || facility == null || facility.length == 0)
-				return new ErrorHandler(new ResourceNotFoundError("Facility"), res);
-			else 
-                return new ResponseHandler({status: 201, message: facility}, res);
-        }).catch(Sequelize.Error, function (err) {
-            return new ErrorHandler(new DatabaseError(err.message, err.name), res);
-        });
-    }
-
-    updateFacility(data, res) {
-    	if(!isNaN(data.facilityId)) {
-            this.Facilities.findOne({
-				where: {id: data.facilityId}
-            }).then(facility => {
-				if (facility === undefined || facility == null || facility.length == 0)
-					return new ErrorHandler(new ResourceNotFoundError("Facility"), res);
-				else {
+                    reject(new ResourceNotFoundError("Facility"));
+                else {
                     for (const key in data.facilityData) {
-						if (data.facilityData.hasOwnProperty(key)) {
-							facility[key] = data.facilityData[key];
-						}
-					}
-					facility.save().then(function() {
-						return new ResponseHandler({status: 200, message: facility}, res);
-					}).catch(Sequelize.Error, function (err) {
-						return new ErrorHandler(new DatabaseError(err.message, err.name), res);
-					});
-				}
+                        if (data.facilityData.hasOwnProperty(key)) {
+                            facility[key] = data.facilityData[key];
+                        }
+                    }
+                    facility.save().then(function () {
+                        resolve(facility);
+                    }).catch(Sequelize.Error, function (err) {
+                        reject(new DatabaseError(err.message, err.name));
+                    });
+                }
             }).catch(Sequelize.Error, function (err) {
-                return new ErrorHandler(new DatabaseError(err.message, err.name), res);
+                reject(new DatabaseError(err.message, err.name));
             });
-		}
+        }
         else {
-            return new ErrorHandler(new InvalidDataError("Facility Id"), res);
+            reject(new InvalidDataError("Facility Id"));
         }
     }
 }
