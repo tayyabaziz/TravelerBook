@@ -9,7 +9,7 @@ class FacilitiesController {
 	async list_all_facilities(req, res) {
 		try {
 			var data = await FacilitiesService.getAllFacilities();
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -18,7 +18,7 @@ class FacilitiesController {
 	async read_facility(req, res) {
 		try {
 			var data = await FacilitiesService.getFacility({ facilityId: req.params.facilityId });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -30,7 +30,7 @@ class FacilitiesController {
 			var facility = {};
 			facility.facility = (facilityData.facility != undefined) ? facilityData.facility : null;
 			var data = await FacilitiesService.createFacility({ facilityData: facility });
-			new ResponseHandler({ status: 201, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -42,7 +42,7 @@ class FacilitiesController {
 			var facility = {};
 			facility.facility = (facilityData.facility != undefined) ? facilityData.facility : null;
 			var data = await FacilitiesService.updateFacility({ facilityId: req.params.facilityId, facilityData: facility });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}

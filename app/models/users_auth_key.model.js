@@ -4,7 +4,7 @@ class UsersAuthKeyModel {
         var baseTableFields = {
             id: { type: Sequelize.BIGINT, allowNull: false, primaryKey: true, autoIncrement: true },
             userId: { type: Sequelize.BIGINT, allowNull: false },
-            userType: { type: Sequelize.BIGINT, allowNull: false },
+            userType: { type: Sequelize.INTEGER, allowNull: false },
             authKey: { type: Sequelize.STRING, allowNull: false },
         };
 

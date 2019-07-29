@@ -9,33 +9,23 @@ class UsersAuthService {
         this.UsersAuthKey = new UsersAuthKeyModel(Sequelize, sequelize);
     }
 
-    getAllHotelRooms(data) {
+    getApiKeyUser(data) {
         return new Promise((resolve, reject) => {
-            if (!isNaN(data.hotelId)) {
-                this.Hotels.findOne({
-                    where: {
-                        id: data.hotelId,
-                        inactive: { $or: [0, null] }
-                    },
-                    include: [{
-                        model: this.Rooms,
-                        where: {
-                            inactive: { $or: [0, null] }
-                        },
-                        required: false,
-                    }]
-                }).then(hotels => {
-                    if (hotels === undefined || hotels === null || hotels.length == 0)
-                        reject(new ResourceNotFoundError("Hotel"));
-                    else
-                        resolve(hotels);
-                }).catch(Sequelize.Error, function (err) {
-                    reject(new DatabaseError(err.message, err.name));
-                });
+            if (data.apiKey == "") {
+                reject(new InvalidDataError("Api Key"));
             }
-            else {
-                reject(new InvalidDataError("Hotel Id"));
-            }
+            this.UsersAuthKey.findOne({
+                where: {
+                    apiKey: data.apiKey
+                }
+            }).then(user => {
+                if (user === undefined || user.length == 0)
+                    reject(new ResourceNotFoundError("User"));
+                else
+                    resolve(user);
+            }).catch(Sequelize.Error, function (err) {
+                reject(new DatabaseError(err.message, err.name));
+            });
         });
     }
 }

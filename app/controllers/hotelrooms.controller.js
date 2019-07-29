@@ -9,7 +9,7 @@ class HotelRoomsController {
 	async read_hotel_rooms(req, res) {
 		try {
 			var data = await HotelRoomsService.getAllHotelRooms({ hotelId: req.params.hotelId });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}

@@ -12,7 +12,7 @@ class RoomController {
 			let limit = req.query.limit ? req.query.limit : 10;
 			let offset = (page - 1) * limit;
 			var data = await RoomService.getAllRooms({ offset: offset, limit: limit });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -21,7 +21,7 @@ class RoomController {
 	async read_room(req, res) {
 		try {
 			var data = await RoomService.getRoom({ roomId: req.params.roomId });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -47,7 +47,7 @@ class RoomController {
 			room.room_facilities = (roomData.room_facilities != undefined) ? roomData.room_facilities : [];
 
 			var data = await RoomService.createRoom({ roomData: room });
-			new ResponseHandler({ status: 201, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -69,7 +69,7 @@ class RoomController {
 			room.maxCancelationTime = (roomData.maxCancelationTime != undefined) ? roomData.maxCancelationTime : null;
 
 			var data = await RoomService.updateRoom({ roomId: req.params.roomId, roomData: room });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -79,7 +79,7 @@ class RoomController {
 		try {
 			var roomData = req.body;
 			var data = await RoomService.updateRoomField({ roomId: req.params.roomId, roomData: roomData });//Passing Data direct because no modification required
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -88,7 +88,7 @@ class RoomController {
 	async remove_room(req, res) {
 		try {
 			var data = await RoomService.removeRoom({ roomId: req.params.roomId });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -97,7 +97,7 @@ class RoomController {
 	async read_room_images(req, res) {
 		try {
 			var data = await RoomService.getRoomImages({ roomId: req.params.roomId });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -106,7 +106,7 @@ class RoomController {
 	async read_room_facilities(req, res) {
 		try {
 			var data = await RoomService.getRoomFacilities({ roomId: req.params.roomId });
-			new ResponseHandler({ status: 200, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -116,7 +116,7 @@ class RoomController {
 		try {
 			var roomExtendedData = req.body;
 			var data = await RoomService.createRoomImages({ roomId: req.params.roomId, roomExtendedData: roomExtendedData });//Passing Data direct because no modification required
-			new ResponseHandler({ status: 201, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}
@@ -126,7 +126,7 @@ class RoomController {
 		try {
 			var roomExtendedData = req.body;
 			var data = await RoomService.createRoomFacilities({ roomId: req.params.roomId, roomExtendedData: roomExtendedData });//Passing Data direct because no modification required
-			new ResponseHandler({ status: 201, message: data }, res);
+			new ResponseHandler(data, req.method, res);
 		} catch (err) {
 			new ErrorHandler(err, res);
 		}

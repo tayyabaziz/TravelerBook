@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const passport = require('passport');
 
 const config = require('./config.json');
 var loggerFunction = require('./logger');
@@ -13,6 +14,8 @@ if (config.appConfig.compression) {
     var compression = require('compression')
     app.use(compression());
 }
+
+app.use(passport.initialize());
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json())
