@@ -12,6 +12,8 @@ class ErrorHandler {
             res.status(403).json({ status: 403, message: error.message });
         } else if (error instanceof AuthorizationError) {
             res.status(401).json({ status: 401, message: error.message });
+        } else if (error instanceof Error) {
+            res.status(error.statusCode).json({ status: error.statusCode, message: error.message });
         }
 
         var logString = "Status: " + res.statusCode + ', Message: ' + error.message;

@@ -9,7 +9,7 @@ const UsersAuthService = new UsersAuthServiceClass();
 class AuthMiddleware {
     constructor() {
         passport.use(new HeaderAPIKeyStrategy(
-            { header: 'Authorization', prefix: 'Api-Key ' },
+            { header: 'ApiKey', prefix: '' },
             false,
             async function (apiKey, done) {
                 var userData = {
@@ -26,14 +26,20 @@ class AuthMiddleware {
         ));
     }
 
-    async isAuthenticated(req, res, next) {
+    isAuthenticated(req, res, next) {
         var check = true;
-        await passport.authenticate('headerapikey', { session: false },  function (err, user, info) {
-            if (err) { return new ErrorHandler(new AuthenticationError(), res); }
-            if (!user) { return new ErrorHandler(new AuthenticationError(), res); }
-            else
-                return next();
-        })(req, res, next);
+        if (req.headers.apikey) {
+            passport.authenticate('headerapikey', { session: false }, function (err, user, info) {
+                if (err) { return new ErrorHandler(new AuthenticationError(err.message), res); }
+                if (!user) { return new ErrorHandler(new AuthenticationError(), res); }
+                else {
+                    return next();
+                }
+            })(req, res, next);
+        }
+        else {
+            return new ErrorHandler(new AuthenticationError("Please provide correct Api Key."), res);
+        }
     }
 
     isAuthorized(req, res, next) {

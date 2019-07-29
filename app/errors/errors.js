@@ -1,18 +1,12 @@
 class ResourceNotFoundError extends Error {
     constructor(message) {
-        super(`${message} not Found`);
-        this.data = { message };
-        this.name = this.constructor.name;
-        Error.captureStackTrace(this, this.constructor);
+        super(message ? `${message} not Found` : "Resource not found");
     }
 }
 
 class InvalidDataError extends Error {
     constructor(message) {
-        super(`Invalid ${message}`);
-        this.data = { message };
-        this.name = this.constructor.name;
-        Error.captureStackTrace(this, this.constructor);
+        super(message ? "Bad Request: Invalid " + message : "Bad Request");
     }
 }
 
@@ -24,17 +18,15 @@ class DatabaseError extends Error {
     }
 }
 
-
 class AuthenticationError extends Error {
-    constructor() {
-        super("Authentication Failed");
+    constructor(message) {
+        super(message ? "Authentication Failed: " + message : "Authentication Failed");
     }
 }
 
-
 class AuthorizationError extends Error {
-    constructor() {
-        super("Authorization Failed");
+    constructor(message) {
+        super(message ? "Authorization Failed: " + message : "Authorization Failed");
     }
 }
 

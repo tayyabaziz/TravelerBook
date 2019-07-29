@@ -1,26 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const passport = require('passport');
 
 const config = require('./config.json');
-var loggerFunction = require('./logger');
+const loggerFunction = require('./logger');
 
 // create express app
 const app = express();
 
 if (config.appConfig.compression) {
     // compress all response
-    var compression = require('compression')
+    const compression = require('compression')
     app.use(compression());
 }
-
-app.use(passport.initialize());
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json())
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
+
 
 config.appConfig.apiContainers.forEach(elements => {
     if (elements.available) {
@@ -50,19 +48,21 @@ app.get('/', (req, res) => {
     res.end();
 });
 
-app.all('*', function (error, req, res, next) {
-    let err = new Error(`RouteError: Cannot ${req.method} ${req.originalUrl}, No HTTP resource was found that matches the request.`);
-    err.statusCode = 404;
-    var logString = "Status: " + err.statusCode + ', Message: ' + err.message;
-    if (res.logger) {
-        res.logger.error(logString);
-    }
-    else {
-        console.log(logString);
-    }
-    res.status(err.statusCode).json({ status: err.statusCode, message: err.message });
-    res.end();
-});
+// app.all("*", function (error, req, res, next) {
+//     console.log(req);
+//     let err = new Error(`RouteError: Cannot ${req.method} ${req.originalUrl}, No HTTP resource was found that matches the request.`);
+//     err.statusCode = 404;
+//     var logString = "Status: " + err.statusCode + ', Message: ' + err.message;
+
+//     if (res.logger) {
+//         res.logger.error(logString);
+//     }
+//     else {
+//         console.log(logString);
+//     }
+//     res.status(err.statusCode).json({ status: err.statusCode, message: err.message });
+//     res.end();
+// });
 
 // listen for requests
 app.listen(config.appConfig.port, () => {

@@ -14,18 +14,20 @@ class UsersAuthService {
             if (data.apiKey == "") {
                 reject(new InvalidDataError("Api Key"));
             }
-            this.UsersAuthKey.findOne({
-                where: {
-                    apiKey: data.apiKey
-                }
-            }).then(user => {
-                if (user === undefined || user === null || user.length == 0)
-                    reject(new ResourceNotFoundError("User"));
-                else
-                    resolve(user);
-            }).catch(Sequelize.Error, function (err) {
-                reject(new DatabaseError(err.message, err.name));
-            });
+            else {
+                this.UsersAuthKey.findOne({
+                    where: {
+                        apiKey: data.apiKey
+                    }
+                }).then(user => {
+                    if (user === undefined || user === null || user.length == 0)
+                        reject(new InvalidDataError("Api Key"));
+                    else
+                        resolve(user);
+                }).catch(Sequelize.Error, function (err) {
+                    reject(new DatabaseError(err.message, err.name));
+                });
+            }
         });
     }
 }
