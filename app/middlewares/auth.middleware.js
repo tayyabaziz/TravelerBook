@@ -4,9 +4,7 @@ const ErrorHandler = require('../handlers/error.handler');
 const { AuthenticationError, AuthorizationError } = require('../errors/errors');
 
 const UsersAuthServiceClass = require('../services/usersauth.service');
-const ResponseHandler = require('../handlers/response.handler');
 const UsersAuthService = new UsersAuthServiceClass();
-
 
 class AuthMiddleware {
     constructor() {
@@ -14,8 +12,6 @@ class AuthMiddleware {
             { header: 'Authorization', prefix: 'Api-Key ' },
             false,
             async function (apiKey, done) {
-                console.log(apiKey);
-
                 var userData = {
                     apiKey
                 }
@@ -30,16 +26,14 @@ class AuthMiddleware {
         ));
     }
 
-    isAuthenticated(req, res, next) {
+    async isAuthenticated(req, res, next) {
         var check = true;
-        var authCheck = passport.authenticate('headerapikey', { session: false });
-        console.log(authCheck);
-
-        if (check)
-            return next();
-        else {
-            return new ErrorHandler(new AuthenticationError(), res);
-        }
+        await passport.authenticate('headerapikey', { session: false },  function (err, user, info) {
+            if (err) { return new ErrorHandler(new AuthenticationError(), res); }
+            if (!user) { return new ErrorHandler(new AuthenticationError(), res); }
+            else
+                return next();
+        })(req, res, next);
     }
 
     isAuthorized(req, res, next) {

@@ -19,7 +19,7 @@ class UsersAuthService {
                     apiKey: data.apiKey
                 }
             }).then(user => {
-                if (user === undefined || user.length == 0)
+                if (user === undefined || user === null || user.length == 0)
                     reject(new ResourceNotFoundError("User"));
                 else
                     resolve(user);
