@@ -2,9 +2,10 @@ const passport = require('passport');
 const HeaderAPIKeyStrategy = require('passport-headerapikey').HeaderAPIKeyStrategy
 const ErrorHandler = require('../handlers/error.handler');
 const { AuthenticationError, AuthorizationError } = require('../errors/errors');
-
 const UsersAuthServiceClass = require('../services/usersauth.service');
 const UsersAuthService = new UsersAuthServiceClass();
+const HelperClass = require('../helpers/helper.class');
+const Helper = new HelperClass();
 
 class AuthMiddleware {
     constructor() {
@@ -28,18 +29,34 @@ class AuthMiddleware {
 
     isAuthenticated(req, res, next) {
         var check = true;
-        if (req.headers.apikey) {
-            passport.authenticate('headerapikey', { session: false }, function (err, user, info) {
-                if (err) { return new ErrorHandler(new AuthenticationError(err.message), res); }
-                if (!user) { return new ErrorHandler(new AuthenticationError(), res); }
-                else {
-                    return next();
-                }
-            })(req, res, next);
-        }
-        else {
+        if (!req.headers.apikey) {
             return new ErrorHandler(new AuthenticationError("Please provide correct Api Key."), res);
         }
+        if (!req.headers.username) {
+            return new ErrorHandler(new AuthenticationError("Please provide correct User Name."), res);
+        }
+        if (!req.headers.userpass) {
+            return new ErrorHandler(new AuthenticationError("Please provide correct Password."), res);
+        }
+        passport.authenticate('headerapikey', { session: false }, function (err, user, info) {
+            if (err) {
+                return new ErrorHandler(new AuthenticationError(err.message), res);
+            }
+            if (!user) {
+                return new ErrorHandler(new AuthenticationError(), res);
+            }
+            else {
+                let userpass = Helper.hash(req.headers.userpass);
+                if (user.userName == req.headers.username && user.userPass == userpass) {
+                    user.userPass = "";
+                    return next();
+                }
+                else {
+                    return new ErrorHandler(new AuthenticationError("Invalid Api Key"), res);
+                }
+
+            }
+        })(req, res, next);
     }
 
     isAuthorized(req, res, next) {
