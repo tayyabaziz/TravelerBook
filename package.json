@@ -4,7 +4,8 @@
     "description": "Hotel Booking",
     "main": "index.js",
     "scripts": {
-        "start": "nodemon index.js"
+        "start": "nodemon index.js",
+        "pretest": "eslint --ignore-path .gitignore ."
     },
     "keywords": [
         "TravelerBook",
@@ -37,5 +38,12 @@
         "url": "https://github.com/tayyabaziz/TravelerBook/issues"
     },
     "homepage": "https://github.com/tayyabaziz/TravelerBook#readme",
-    "devDependencies": {}
+    "devDependencies": {
+        "eslint": "^6.1.0",
+        "eslint-config-standard": "^13.0.1",
+        "eslint-plugin-import": "^2.18.2",
+        "eslint-plugin-node": "^9.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.0"
+    }
 }
