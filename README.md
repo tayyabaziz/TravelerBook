@@ -19,5 +19,5 @@ npm start
 
 Notes before starting API server: 
 
- 1. Database should be create separately and configure on config.json file in app/config.
- 2. App will automatically stop if connection details are not correct.
+1. Database should be create separately and configure on config.json file in app/config.
+2. App will automatically stop if connection details are not correct.
