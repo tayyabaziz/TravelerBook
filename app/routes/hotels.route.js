@@ -21,6 +21,6 @@ router.post('/hotel/:hotelId/facilities', AuthMiddleware.isAuthenticated, AuthMi
 const HotelRoomsControllerClass = require('../controllers/hotelrooms.controller')
 const HotelRoomsController = new HotelRoomsControllerClass()
 
-router.get('/hotel/:hotelId/rooms', AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, HotelRoomsController.readHotel_rooms)
+router.get('/hotel/:hotelId/rooms', AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, HotelRoomsController.readHotelRooms)
 
 module.exports = router
