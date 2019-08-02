@@ -2,7 +2,7 @@
 [![DeepScan grade](https://deepscan.io/api/teams/4887/projects/6654/branches/56884/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=4887&pid=6654&bid=56884)
 [![Gitter](https://badges.gitter.im/TravelerBook/community.svg)](https://gitter.im/TravelerBook/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-##Sample Hotel Booking API Test
+## Sample Hotel Booking API Test
 
 ### Install and update node.js depedencies by using following commands
 ```sh
