@@ -1,4 +1,5 @@
 # TravelerBook
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9c0f4b52c58f43fab1140b4319c5cdfd)](https://app.codacy.com/app/tayyabaziz/TravelerBook?utm_source=github.com&utm_medium=referral&utm_content=tayyabaziz/TravelerBook&utm_campaign=Badge_Grade_Dashboard)
 [![DeepScan grade](https://deepscan.io/api/teams/4887/projects/6654/branches/56884/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=4887&pid=6654&bid=56884)
 [![Gitter](https://badges.gitter.im/TravelerBook/community.svg)](https://gitter.im/TravelerBook/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
