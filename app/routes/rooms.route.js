@@ -4,7 +4,7 @@ const router = express.Router()
 const AuthMiddlewareClass = require('../middlewares/auth.middleware')
 const AuthMiddleware = new AuthMiddlewareClass()
 
-const RoomControllerClass = require('../controllers/rooms.controller')
+const { RoomControllerClass } = require('../controllers/all.controllers')
 const RoomController = new RoomControllerClass()
 
 router.get('/rooms', AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, RoomController.listAllRooms)

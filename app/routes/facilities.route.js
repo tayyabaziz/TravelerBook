@@ -4,7 +4,7 @@ const router = express.Router()
 const AuthMiddlewareClass = require('../middlewares/auth.middleware')
 const AuthMiddleware = new AuthMiddlewareClass()
 
-const FacilitiesControllerClass = require('../controllers/facilities.controller')
+const { FacilitiesControllerClass } = require('../controllers/all.controllers')
 const FacilitiesController = new FacilitiesControllerClass()
 
 router.get('/facilities', AuthMiddleware.isAuthenticated, AuthMiddleware.isAuthorized, FacilitiesController.listAllFacilities)
