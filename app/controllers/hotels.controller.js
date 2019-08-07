@@ -6,8 +6,10 @@ const HotelService = new HotelServiceClass()
 class HotelController {
   async listAllHotels (req, res) {
     try {
-      const page = req.query.page ? req.query.page : 1
-      const limit = req.query.limit ? req.query.limit : 10
+      let page = req.query.page ? req.query.page : 1
+      let limit = req.query.limit ? req.query.limit : 10
+      page = parseInt(page)
+      limit = parseInt(limit)
       const offset = (page - 1) * limit
       var data = await HotelService.getAllHotels({ offset: offset, limit: limit })
       return new ResponseHandler(data, req.method, res)
