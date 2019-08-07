@@ -4,10 +4,15 @@ const cors = require('cors')
 const compression = require('compression')
 const config = require('./config.json')
 const loggerFunction = require('./logger')
+const parseBool = require('parseboolean')
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 const app = express() // create express app
 
-if (process.env.COMPRESSION_ENABLE || config.appConfig.compression) {
+if (parseBool(process.env.COMPRESSION_ENABLE) || config.appConfig.compression) {
   app.use(compression()) // compress all response
 }
 
@@ -15,7 +20,7 @@ app.use(bodyParser.json()) // parse requests of content-type - application/json
 app.use(bodyParser.urlencoded({ extended: true })) // parse requests of content-type - application/x-www-form-urlencoded
 app.use(cors())
 
-if (process.env.LOGGING_ENABLE || config.appConfig.apiLoggingEnable) {
+if (parseBool(process.env.LOGGING_ENABLE) || config.appConfig.apiLoggingEnable) {
   var logger = loggerFunction('app') // file and console logging enabled
 
   app.use(function (req, res, next) {

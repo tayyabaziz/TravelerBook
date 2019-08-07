@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize')
+const parseBool = require('parseboolean')
 const config = require('../../config.json')
 
 const dbConfig = config.dbConfig[config.environment]
@@ -7,7 +8,7 @@ const sequelize = new Sequelize(process.env.DB_NAME || dbConfig.database, proces
   host: process.env.DB_HOST || dbConfig.host,
   port: process.env.DB_PORT || dbConfig.port,
   dialect: process.env.DB_DIALECT || dbConfig.dialect,
-  logging: (process.env.DB_LOGGING || config.dbConfig.dbLoggingEnable) ? console.log : false // Console query logging
+  logging: (parseBool(process.env.DB_LOGGING) || config.dbConfig.dbLoggingEnable) ? console.log : false // Console query logging
 })
 
 sequelize.authenticate().then(() => {
