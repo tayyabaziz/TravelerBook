@@ -4,20 +4,9 @@
         "port": 3000,
         "apiLoggingEnable": true,
         "compression": true,
-        "apiContainers": [
-            {
-                "versionNo": "default",
-                "apiPath": "app",
-                "apiUrlPath": "/api",
-                "routesPath": "./app/routes/all.routes",
-                "available": true
-            },
-            {
-                "versionNo": "v1",
-                "apiPath": "app1",
-                "available": false
-            }
-        ]
+        "versionNo": "default",
+        "apiPath": "app",
+        "apiUrlPath": "/api"
     },
     "dbConfig": {
         "dbLoggingEnable": false,

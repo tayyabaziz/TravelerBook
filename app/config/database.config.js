@@ -3,11 +3,11 @@ const config = require('../../config.json')
 
 const dbConfig = config.dbConfig[config.environment]
 
-const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
-  host: dbConfig.host,
-  port: dbConfig.port,
-  dialect: dbConfig.dialect,
-  logging: config.dbConfig.dbLoggingEnable ? console.log : false // Console query logging
+const sequelize = new Sequelize(process.env.DB_NAME || dbConfig.database, process.env.DB_USER || dbConfig.username, process.env.DB_PASS || dbConfig.password, {
+  host: process.env.DB_HOST || dbConfig.host,
+  port: process.env.DB_PORT || dbConfig.port,
+  dialect: process.env.DB_DIALECT || dbConfig.dialect,
+  logging: (process.env.DB_LOGGING || config.dbConfig.dbLoggingEnable) ? console.log : false // Console query logging
 })
 
 sequelize.authenticate().then(() => {
