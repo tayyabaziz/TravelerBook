@@ -59,5 +59,5 @@ app.all('*', function (req, res) {
 
 // listen for requests
 app.listen(process.env.PORT || config.appConfig.port, () => {
-  console.log('Server is listening on port ' + config.appConfig.port)
+  console.log('Server is listening on port ' + process.env.PORT || config.appConfig.port)
 })
